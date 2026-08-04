@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityCare — All Reports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 min-h-screen">
+
+    <header class="bg-white border-b border-slate-100">
+      <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div>
+          <h1 class="text-xl font-extrabold text-slate-900">All Patient Reports</h1>
+          <p class="text-xs text-slate-500">CityCare Diagnostic Center — Operator Panel</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="https://renbora.com/citycare/admin-upload.html" class="text-sky-600 hover:text-sky-700 text-sm font-semibold">Upload New</a>
+          <button id="logout-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold px-4 py-2 rounded-xl">Log Out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-8">
+
+      <input id="search-box" type="text" placeholder="Search by patient name or phone number..."
+        class="w-full mb-6 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 outline-none" />
+
+      <div id="state-loading" class="text-center py-16 text-sm text-slate-500">Loading reports…</div>
+
+      <div id="state-empty" class="hidden text-center py-16 text-sm text-slate-500">No reports match.</div>
+
+      <div id="table-wrap" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white text-xs uppercase">
+            <tr>
+              <th class="py-3 px-4">Patient</th>
+              <th class="py-3 px-4">Phone</th>
+              <th class="py-3 px-4">Test Date</th>
+              <th class="py-3 px-4 text-center">Views</th>
+              <th class="py-3 px-4 text-center">Downloads</th>
+              <th class="py-3 px-4">Uploaded</th>
+              <th class="py-3 px-4">Link</th>
+            </tr>
+          </thead>
+          <tbody id="reports-body" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+
+    </main>
+
+    <script>
+      let allReports = [];
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function renderRows(reports) {
+        const body = document.getElementById("reports-body");
+        const tableWrap = document.getElementById("table-wrap");
+        const emptyState = document.getElementById("state-empty");
+
+        if (reports.length === 0) {
+          tableWrap.classList.add("hidden");
+          emptyState.classList.remove("hidden");
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+
+        body.innerHTML = reports.map(r => {
+          const link = `${window.location.origin}/citycare/report/${r.token}`;
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(r.patient_name)}</td>
+              <td class="py-3 px-4 text-slate-600">${escapeHtml(r.patient_phone)}</td>
+              <td class="py-3 px-4 text-slate-600">${escapeHtml(r.test_date)}</td>
+              <td class="py-3 px-4 text-center text-slate-600">${escapeHtml(r.view_count)}</td>
+              <td class="py-3 px-4 text-center text-slate-600">${escapeHtml(r.download_count)}</td>
+              <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(r.created_at)}</td>
+              <td class="py-3 px-4">
+                <button onclick="navigator.clipboard.writeText('${escapeHtml(link)}'); this.textContent='Copied!'"
+                  class="text-sky-600 hover:text-sky-700 text-xs font-bold">Copy Link</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function applySearch() {
+        const q = document.getElementById("search-box").value.trim().toLowerCase();
+        if (!q) return renderRows(allReports);
+        const filtered = allReports.filter(r =>
+          r.patient_name.toLowerCase().includes(q) || r.patient_phone.toLowerCase().includes(q)
+        );
+        renderRows(filtered);
+      }
+
+      async function loadReports() {
+        try {
+          const res = await fetch("/citycare/api/reports");
+          if (res.status === 401) {
+            window.location.href = "https://renbora.com/citycare/admin-login.html";
+            return;
+          }
+          allReports = await res.json();
+          document.getElementById("state-loading").classList.add("hidden");
+          renderRows(allReports);
+        } catch (err) {
+          document.getElementById("state-loading").textContent = "Couldn't load reports.";
+        }
+      }
+
+      document.getElementById("search-box").addEventListener("input", applySearch);
+
+      document.getElementById("logout-btn").addEventListener("click", async () => {
+        await fetch("/citycare/api/logout", { method: "POST" });
+        window.location.href = "https://renbora.com/citycare/admin-login.html";
+      });
+
+      loadReports();
+    </script>
+  </body>
+</html>

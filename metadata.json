@@ -1,0 +1,6 @@
+{
+  "name": "CityCare Diagnostic Center",
+  "description": "A comprehensive patient portal for CityCare Diagnostic & Consultation Center to book, schedule, and track medical lab tests, upload doctor prescriptions, explore packages, and view diagnostic analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
