@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityCare — Upload Patient Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-lg">
+
+      <!-- Go to Dashboard nav — sits above the card, stacks naturally on mobile and desktop -->
+      <div class="mb-4 flex justify-end">
+        <a href="admin-dashboard.html"
+          class="inline-flex items-center gap-1.5 text-sm font-bold text-sky-700 hover:text-sky-800 bg-white border border-slate-200 rounded-xl px-4 py-2 shadow-sm transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" rx="1"/>
+            <rect x="14" y="3" width="7" height="5" rx="1"/>
+            <rect x="14" y="12" width="7" height="9" rx="1"/>
+            <rect x="3" y="16" width="7" height="5" rx="1"/>
+          </svg>
+          Go to Dashboard
+        </a>
+      </div>
+
+      <div class="bg-white w-full rounded-3xl shadow-xl border border-slate-100 p-8">
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-1">Upload Patient Report</h1>
+        <p class="text-sm text-slate-500 mb-6">CityCare Diagnostic Center — Operator Panel</p>
+
+        <form id="upload-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Patient Name</label>
+            <input type="text" id="patientName" required
+              class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Report ID (optional)</label>
+            <input type="text" id="reportId" placeholder="Enter a report ID if available"
+              class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+            <p class="text-xxs text-slate-500 mt-1">Optional text identifier for your own records.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Phone Number</label>
+            <input type="tel" id="phone" required placeholder="01XXXXXXXXX" pattern="[0-9]{10,15}"
+              class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+            <p class="text-xxs text-slate-500 mt-1">Digits only, 10 to 15 characters.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Test Date</label>
+            <input type="date" id="date" required
+              class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Report File (PDF / Image)</label>
+            <input type="file" id="file" required accept=".pdf,.jpg,.jpeg,.png"
+              class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm" />
+          </div>
+
+          <button type="submit" id="submit-btn"
+            class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl transition-all">
+            Upload Report
+          </button>
+        </form>
+
+        <!-- Success box -->
+        <div id="result-box" class="hidden mt-6 bg-emerald-50 border border-emerald-100 p-4 rounded-xl space-y-2">
+          <p class="text-sm font-bold text-emerald-800">✓ Report uploaded successfully</p>
+          <p class="text-xs text-emerald-700">Share this secure link with the patient:</p>
+          <div class="flex gap-2">
+            <input id="result-link" readonly class="flex-1 text-xs bg-white border border-emerald-200 rounded-lg px-3 py-2" />
+            <button onclick="copyLink()" class="bg-emerald-600 text-white text-xs font-bold px-3 rounded-lg">Copy</button>
+          </div>
+        </div>
+
+        <!-- Error box -->
+        <div id="error-box" class="hidden mt-6 bg-rose-50 border border-rose-100 p-4 rounded-xl">
+          <p class="text-sm font-bold text-rose-800">Upload failed</p>
+          <p id="error-text" class="text-xs text-rose-600 mt-1"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("upload-form");
+      const resultBox = document.getElementById("result-box");
+      const errorBox = document.getElementById("error-box");
+      const submitBtn = document.getElementById("submit-btn");
+
+      function validatePhone(phone) {
+        const normalized = phone.replace(/\D/g, "");
+        return /^[0-9]{10,15}$/.test(normalized);
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorBox.classList.add("hidden");
+        resultBox.classList.add("hidden");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Uploading...";
+
+        const phoneValue = document.getElementById("phone").value;
+        if (!validatePhone(phoneValue)) {
+          document.getElementById("error-text").textContent = "Phone number must contain only digits and be 10 to 15 characters long.";
+          errorBox.classList.remove("hidden");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Upload Report";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("patientName", document.getElementById("patientName").value);
+        formData.append("reportId", document.getElementById("reportId").value);
+        formData.append("phone", phoneValue);
+        formData.append("date", document.getElementById("date").value);
+        formData.append("file", document.getElementById("file").files[0]);
+
+        try {
+          const response = await fetch("/citycare/api/reports", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Upload failed.");
+          }
+
+          document.getElementById("result-link").value = data.link;
+          resultBox.classList.remove("hidden");
+          form.reset();
+        } catch (err) {
+          document.getElementById("error-text").textContent = err.message;
+          errorBox.classList.remove("hidden");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Upload Report";
+        }
+      });
+
+      function copyLink() {
+        const input = document.getElementById("result-link");
+        input.select();
+        document.execCommand("copy");
+      }
+    </script>
+  </body>
+</html>

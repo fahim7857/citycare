@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityCare — Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 min-h-screen">
+
+    <header class="bg-white border-b border-slate-100">
+      <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 class="text-xl font-extrabold text-slate-900">Admin Dashboard</h1>
+          <p class="text-xs text-slate-500">CityCare Diagnostic Center — Operator Panel</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="https://renbora.com/citycare/admin-upload.html" class="text-sky-600 hover:text-sky-700 text-sm font-semibold">Upload New</a>
+          <button id="logout-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold px-4 py-2 rounded-xl">Log Out</button>
+        </div>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="max-w-6xl mx-auto px-6">
+        <nav class="flex gap-8 -mb-px">
+          <button id="tab-btn-reports" class="tab-btn border-b-2 border-sky-600 text-sky-600 font-bold text-sm px-1 py-3 transition-colors">Report View</button>
+          <button id="tab-btn-appointments" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold text-sm px-1 py-3 transition-colors">Appointment Booking</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+
+      <!-- ======================================= -->
+      <!-- TAB 1: REPORT VIEW (unchanged content)   -->
+      <!-- ======================================= -->
+      <section id="tab-reports">
+
+        <input id="search-box" type="text" placeholder="Search by patient name or phone number..."
+          class="w-full mb-6 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 outline-none" />
+
+        <div id="state-loading" class="text-center py-16 text-sm text-slate-500">Loading reports…</div>
+
+        <div id="state-empty" class="hidden text-center py-16 text-sm text-slate-500">No reports match.</div>
+
+        <div id="table-wrap" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-900 text-white text-xs uppercase">
+              <tr>
+                <th class="py-3 px-4">Patient</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4">Test Date</th>
+                <th class="py-3 px-4 text-center">Views</th>
+                <th class="py-3 px-4 text-center">Downloads</th>
+                <th class="py-3 px-4">Uploaded</th>
+                <th class="py-3 px-4">Link</th>
+              </tr>
+            </thead>
+            <tbody id="reports-body" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ======================================= -->
+      <!-- TAB 2: APPOINTMENT BOOKING (new)         -->
+      <!-- ======================================= -->
+      <section id="tab-appointments" class="hidden space-y-12">
+
+        <!-- Patient bookings -->
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900 mb-4">Patient Bookings</h2>
+
+          <div id="appt-state-loading" class="text-center py-16 text-sm text-slate-500">Loading appointments…</div>
+          <div id="appt-state-empty" class="hidden text-center py-16 text-sm text-slate-500">No appointments yet.</div>
+
+          <div id="appt-table-wrap" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-900 text-white text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4">Patient</th>
+                  <th class="py-3 px-4">Phone</th>
+                  <th class="py-3 px-4">Doctor</th>
+                  <th class="py-3 px-4">Specialty</th>
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4">Time Slot</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Booked</th>
+                  <th class="py-3 px-4"></th>
+                </tr>
+              </thead>
+              <tbody id="appointments-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Doctor management -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-extrabold text-slate-900">Manage Doctors</h2>
+            <button id="add-doctor-btn" class="bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-all">+ Add Doctor</button>
+          </div>
+
+          <!-- Add/Edit doctor form (hidden until Add or Edit is clicked) -->
+          <div id="doctor-form-wrap" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+            <h3 id="doctor-form-title" class="font-bold text-slate-900 mb-4">Add Doctor</h3>
+            <form id="doctor-form" class="space-y-4">
+              <input type="hidden" id="doctor-id" />
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Doctor Name</label>
+                  <input type="text" id="doctor-name" required
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Specialty Category</label>
+                  <input type="text" id="doctor-category" required list="category-options"
+                    placeholder="e.g. Cardiology"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                  <datalist id="category-options"></datalist>
+                  <p class="text-xxs text-slate-400 mt-1">Pick an existing category or type a new one.</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Degree</label>
+                  <input type="text" id="doctor-degree" placeholder="e.g. MBBS, FCPS (Medicine)"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Experience</label>
+                  <input type="text" id="doctor-experience" placeholder="e.g. 10+ years"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Chamber Time</label>
+                  <input type="text" id="doctor-chamber-time" placeholder="e.g. 5:00 PM - 9:00 PM (Sat - Wed)"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Fee (৳)</label>
+                  <input type="number" id="doctor-fee" min="0" required
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+              </div>
+
+              <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" id="doctor-active" checked class="rounded border-slate-300" />
+                Active (visible on public booking form)
+              </label>
+
+              <div class="flex gap-3 pt-2">
+                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-all">Save Doctor</button>
+                <button type="button" id="doctor-form-cancel" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm px-5 py-2.5 rounded-xl transition-all">Cancel</button>
+              </div>
+
+              <p id="doctor-form-error" class="hidden text-xs text-rose-600 font-semibold"></p>
+            </form>
+          </div>
+
+          <div id="doctors-state-loading" class="text-center py-16 text-sm text-slate-500">Loading doctors…</div>
+
+          <div id="doctors-table-wrap" class="hidden bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-900 text-white text-xs uppercase">
+                <tr>
+                  <th class="py-3 px-4">Name</th>
+                  <th class="py-3 px-4">Specialty</th>
+                  <th class="py-3 px-4">Fee</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                  <th class="py-3 px-4"></th>
+                </tr>
+              </thead>
+              <tbody id="doctors-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <script>
+      // ============================================================
+      // Shared helpers
+      // ============================================================
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      async function handleAuthRedirect(res) {
+        if (res.status === 401) {
+          window.location.href = "https://renbora.com/citycare/admin-login.html";
+          return true;
+        }
+        return false;
+      }
+
+      document.getElementById("logout-btn").addEventListener("click", async () => {
+        await fetch("/citycare/api/logout", { method: "POST" });
+        window.location.href = "https://renbora.com/citycare/admin-login.html";
+      });
+
+      // ============================================================
+      // Tab switching
+      // ============================================================
+      const tabBtnReports = document.getElementById("tab-btn-reports");
+      const tabBtnAppointments = document.getElementById("tab-btn-appointments");
+      const tabReports = document.getElementById("tab-reports");
+      const tabAppointments = document.getElementById("tab-appointments");
+
+      let appointmentsLoaded = false;
+
+      function activateTab(tab) {
+        const isReports = tab === "reports";
+
+        tabReports.classList.toggle("hidden", !isReports);
+        tabAppointments.classList.toggle("hidden", isReports);
+
+        tabBtnReports.classList.toggle("border-sky-600", isReports);
+        tabBtnReports.classList.toggle("text-sky-600", isReports);
+        tabBtnReports.classList.toggle("border-transparent", !isReports);
+        tabBtnReports.classList.toggle("text-slate-500", !isReports);
+
+        tabBtnAppointments.classList.toggle("border-sky-600", !isReports);
+        tabBtnAppointments.classList.toggle("text-sky-600", !isReports);
+        tabBtnAppointments.classList.toggle("border-transparent", isReports);
+        tabBtnAppointments.classList.toggle("text-slate-500", isReports);
+
+        if (!isReports && !appointmentsLoaded) {
+          appointmentsLoaded = true;
+          loadAppointments();
+          loadDoctors();
+        }
+      }
+
+      tabBtnReports.addEventListener("click", () => activateTab("reports"));
+      tabBtnAppointments.addEventListener("click", () => activateTab("appointments"));
+
+      // ============================================================
+      // TAB 1: Reports (unchanged logic)
+      // ============================================================
+      let allReports = [];
+
+      function renderReportRows(reports) {
+        const body = document.getElementById("reports-body");
+        const tableWrap = document.getElementById("table-wrap");
+        const emptyState = document.getElementById("state-empty");
+
+        if (reports.length === 0) {
+          tableWrap.classList.add("hidden");
+          emptyState.classList.remove("hidden");
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+
+        body.innerHTML = reports.map(r => {
+          const link = `${window.location.origin}/citycare/report/${r.token}`;
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(r.patient_name)}</td>
+              <td class="py-3 px-4 text-slate-600">${escapeHtml(r.patient_phone)}</td>
+              <td class="py-3 px-4 text-slate-600">${escapeHtml(r.test_date)}</td>
+              <td class="py-3 px-4 text-center text-slate-600">${escapeHtml(r.view_count)}</td>
+              <td class="py-3 px-4 text-center text-slate-600">${escapeHtml(r.download_count)}</td>
+              <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(r.created_at)}</td>
+              <td class="py-3 px-4">
+                <button onclick="navigator.clipboard.writeText('${escapeHtml(link)}'); this.textContent='Copied!'"
+                  class="text-sky-600 hover:text-sky-700 text-xs font-bold">Copy Link</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function applySearch() {
+        const q = document.getElementById("search-box").value.trim().toLowerCase();
+        if (!q) return renderReportRows(allReports);
+        const filtered = allReports.filter(r =>
+          r.patient_name.toLowerCase().includes(q) || r.patient_phone.toLowerCase().includes(q)
+        );
+        renderReportRows(filtered);
+      }
+
+      async function loadReports() {
+        try {
+          const res = await fetch("/citycare/api/reports");
+          if (await handleAuthRedirect(res)) return;
+          allReports = await res.json();
+          document.getElementById("state-loading").classList.add("hidden");
+          renderReportRows(allReports);
+        } catch (err) {
+          document.getElementById("state-loading").textContent = "Couldn't load reports.";
+        }
+      }
+
+      document.getElementById("search-box").addEventListener("input", applySearch);
+
+      loadReports();
+
+      // ============================================================
+      // TAB 2a: Appointments
+      // ============================================================
+      const statusColors = {
+        pending: "text-amber-700 bg-amber-50",
+        confirmed: "text-emerald-700 bg-emerald-50",
+        cancelled: "text-rose-700 bg-rose-50",
+      };
+
+      function renderAppointmentRows(appointments) {
+        const body = document.getElementById("appointments-body");
+        const tableWrap = document.getElementById("appt-table-wrap");
+        const emptyState = document.getElementById("appt-state-empty");
+
+        if (appointments.length === 0) {
+          tableWrap.classList.add("hidden");
+          emptyState.classList.remove("hidden");
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+
+        body.innerHTML = appointments.map(a => `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(a.patient_name)}</td>
+            <td class="py-3 px-4 text-slate-600">${escapeHtml(a.patient_phone)}</td>
+            <td class="py-3 px-4 text-slate-600">${escapeHtml(a.doctor_name || "—")}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(a.doctor_specialty || "—")}</td>
+            <td class="py-3 px-4 text-slate-600">${escapeHtml(a.appointment_date)}</td>
+            <td class="py-3 px-4 text-slate-600">${escapeHtml(a.time_slot || "—")}</td>
+            <td class="py-3 px-4">
+              <select data-id="${a.id}" class="status-select text-xs font-bold rounded-lg px-2 py-1.5 border-0 outline-none ${statusColors[a.status] || ''}">
+                <option value="pending" ${a.status === "pending" ? "selected" : ""}>Pending</option>
+                <option value="confirmed" ${a.status === "confirmed" ? "selected" : ""}>Confirmed</option>
+                <option value="cancelled" ${a.status === "cancelled" ? "selected" : ""}>Cancelled</option>
+              </select>
+            </td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${escapeHtml(a.created_at)}</td>
+            <td class="py-3 px-4">
+              <button data-id="${a.id}" class="delete-appt-btn text-rose-600 hover:text-rose-700 text-xs font-bold">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+
+        body.querySelectorAll(".status-select").forEach(select => {
+          select.addEventListener("change", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            const status = e.target.value;
+            try {
+              const res = await fetch(`/citycare/api/appointments/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status }),
+              });
+              if (await handleAuthRedirect(res)) return;
+              if (!res.ok) throw new Error("Update failed");
+              loadAppointments();
+            } catch (err) {
+              alert("Status update failed. Please try again.");
+            }
+          });
+        });
+
+        body.querySelectorAll(".delete-appt-btn").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (!confirm("Delete this appointment record?")) return;
+            try {
+              const res = await fetch(`/citycare/api/appointments/${id}`, { method: "DELETE" });
+              if (await handleAuthRedirect(res)) return;
+              if (!res.ok) throw new Error("Delete failed");
+              loadAppointments();
+            } catch (err) {
+              alert("Couldn't delete this appointment. Please try again.");
+            }
+          });
+        });
+      }
+
+      async function loadAppointments() {
+        try {
+          const res = await fetch("/citycare/api/appointments");
+          if (await handleAuthRedirect(res)) return;
+          const appointments = await res.json();
+          document.getElementById("appt-state-loading").classList.add("hidden");
+          renderAppointmentRows(appointments);
+        } catch (err) {
+          document.getElementById("appt-state-loading").textContent = "Couldn't load appointments.";
+        }
+      }
+
+      // ============================================================
+      // TAB 2b: Doctor management
+      // ============================================================
+      let allDoctors = [];
+
+      const doctorFormWrap = document.getElementById("doctor-form-wrap");
+      const doctorForm = document.getElementById("doctor-form");
+      const doctorFormTitle = document.getElementById("doctor-form-title");
+      const doctorFormError = document.getElementById("doctor-form-error");
+
+      function openDoctorForm(doctor) {
+        doctorFormError.classList.add("hidden");
+        if (doctor) {
+          doctorFormTitle.textContent = "Edit Doctor";
+          document.getElementById("doctor-id").value = doctor.id;
+          document.getElementById("doctor-name").value = doctor.name;
+          document.getElementById("doctor-category").value = doctor.specialty_category;
+          document.getElementById("doctor-degree").value = doctor.degree || "";
+          document.getElementById("doctor-experience").value = doctor.experience || "";
+          document.getElementById("doctor-chamber-time").value = doctor.chamber_time || "";
+          document.getElementById("doctor-fee").value = doctor.fee;
+          document.getElementById("doctor-active").checked = !!doctor.active;
+        } else {
+          doctorFormTitle.textContent = "Add Doctor";
+          doctorForm.reset();
+          document.getElementById("doctor-id").value = "";
+          document.getElementById("doctor-active").checked = true;
+        }
+        doctorFormWrap.classList.remove("hidden");
+        doctorFormWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      function closeDoctorForm() {
+        doctorFormWrap.classList.add("hidden");
+        doctorForm.reset();
+      }
+
+      document.getElementById("add-doctor-btn").addEventListener("click", () => openDoctorForm(null));
+      document.getElementById("doctor-form-cancel").addEventListener("click", closeDoctorForm);
+
+      doctorForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        doctorFormError.classList.add("hidden");
+
+        const id = document.getElementById("doctor-id").value;
+        const payload = {
+          name: document.getElementById("doctor-name").value.trim(),
+          specialtyCategory: document.getElementById("doctor-category").value.trim(),
+          degree: document.getElementById("doctor-degree").value.trim(),
+          experience: document.getElementById("doctor-experience").value.trim(),
+          chamberTime: document.getElementById("doctor-chamber-time").value.trim(),
+          fee: document.getElementById("doctor-fee").value,
+          active: document.getElementById("doctor-active").checked,
+        };
+
+        try {
+          const url = id ? `/citycare/api/doctors/${id}` : "/citycare/api/doctors";
+          const method = id ? "PUT" : "POST";
+          const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (await handleAuthRedirect(res)) return;
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Save failed");
+
+          closeDoctorForm();
+          loadDoctors();
+        } catch (err) {
+          doctorFormError.textContent = err.message;
+          doctorFormError.classList.remove("hidden");
+        }
+      });
+
+      function renderDoctorRows(doctors) {
+        const body = document.getElementById("doctors-body");
+        const tableWrap = document.getElementById("doctors-table-wrap");
+
+        tableWrap.classList.remove("hidden");
+
+        body.innerHTML = doctors.map(d => `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(d.name)}</td>
+            <td class="py-3 px-4 text-slate-600">${escapeHtml(d.specialty_category)}</td>
+            <td class="py-3 px-4 text-slate-600">৳ ${escapeHtml(d.fee)}</td>
+            <td class="py-3 px-4 text-center">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${d.active ? 'text-emerald-700 bg-emerald-50' : 'text-slate-500 bg-slate-100'}">
+                ${d.active ? "Active" : "Inactive"}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-right space-x-3">
+              <button data-id="${d.id}" class="edit-doctor-btn text-sky-600 hover:text-sky-700 text-xs font-bold">Edit</button>
+              <button data-id="${d.id}" class="delete-doctor-btn text-rose-600 hover:text-rose-700 text-xs font-bold">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+
+        body.querySelectorAll(".edit-doctor-btn").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            const doctor = allDoctors.find(d => String(d.id) === id);
+            if (doctor) openDoctorForm(doctor);
+          });
+        });
+
+        body.querySelectorAll(".delete-doctor-btn").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.getAttribute("data-id");
+            if (!confirm("Delete this doctor? This can't be undone.")) return;
+            try {
+              const res = await fetch(`/citycare/api/doctors/${id}`, { method: "DELETE" });
+              if (await handleAuthRedirect(res)) return;
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "Delete failed");
+              loadDoctors();
+            } catch (err) {
+              alert(err.message);
+            }
+          });
+        });
+
+        // Keep the specialty-category datalist (used by the add/edit form)
+        // up to date with whatever categories currently exist.
+        const categoryOptions = document.getElementById("category-options");
+        const uniqueCategories = [...new Set(doctors.map(d => d.specialty_category))];
+        categoryOptions.innerHTML = uniqueCategories.map(c => `<option value="${escapeHtml(c)}"></option>`).join("");
+      }
+
+      async function loadDoctors() {
+        try {
+          const res = await fetch("/citycare/api/doctors/all");
+          if (await handleAuthRedirect(res)) return;
+          allDoctors = await res.json();
+          document.getElementById("doctors-state-loading").classList.add("hidden");
+          renderDoctorRows(allDoctors);
+        } catch (err) {
+          document.getElementById("doctors-state-loading").textContent = "Couldn't load doctors.";
+        }
+      }
+    </script>
+  </body>
+</html>

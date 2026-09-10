@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CityCare — Your Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
+      .font-display { font-family: 'Manrope', sans-serif; }
+    </style>
+  </head>
+  <body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-slate-100">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-5 flex items-center gap-3">
+        <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
+          <i data-lucide="activity" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <span class="text-lg font-extrabold text-slate-900 font-display block leading-tight">CityCare</span>
+          <span class="text-[11px] text-sky-600 font-bold tracking-wider uppercase block">Diagnostic Center</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow max-w-3xl w-full mx-auto px-4 sm:px-6 py-10">
+
+      <!-- LOADING STATE -->
+      <div id="state-loading" class="text-center py-20">
+        <div class="inline-block animate-spin text-sky-600 mb-3">
+          <i data-lucide="loader-2" class="h-8 w-8"></i>
+        </div>
+        <p class="text-sm text-slate-500">Looking up your report…</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="state-error" class="hidden max-w-md mx-auto bg-rose-50 border border-rose-100 text-rose-800 p-6 rounded-2xl text-center space-y-2">
+        <p class="font-bold">This link isn't working</p>
+        <p class="text-xs text-rose-600 leading-relaxed">
+          We couldn't find a report for this link. It may have been typed incorrectly, or the report may have been removed.
+          If you believe this is a mistake, please call <span class="font-semibold">01789-555666</span>.
+        </p>
+      </div>
+
+      <!-- LOADED STATE -->
+      <div id="state-loaded" class="hidden space-y-6">
+
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8 space-y-5">
+          <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-5">
+            <div>
+              <p class="text-[11px] font-bold text-sky-600 uppercase tracking-widest mb-1">Your Diagnostic Report</p>
+              <h1 id="patient-name" class="text-2xl font-extrabold text-slate-900 font-display">—</h1>
+            </div>
+            <div class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-3 py-1.5 rounded-full whitespace-nowrap">
+              Ready to view
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-slate-400 text-xs font-medium">Phone on file</p>
+              <p id="patient-phone" class="font-semibold text-slate-900 mt-0.5">—</p>
+            </div>
+            <div>
+              <p class="text-slate-400 text-xs font-medium">Test date</p>
+              <p id="patient-date" class="font-semibold text-slate-900 mt-0.5">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Embedded viewer (filled in dynamically: PDF / image / generic) -->
+        <div id="viewer-card" class="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 sm:p-6 space-y-4">
+          <div id="viewer-mount" class="rounded-2xl overflow-hidden border border-slate-100 bg-slate-50"></div>
+
+          <a id="download-btn" href="#" download
+            class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+            <i data-lucide="download" class="h-4 w-4"></i>
+            <span>Download Report</span>
+          </a>
+        </div>
+
+        <p class="text-center text-xs text-slate-400">
+          Keep this link private — anyone with it can view this report.
+        </p>
+      </div>
+
+    </main>
+
+    <footer class="text-center text-xs text-slate-400 py-6">
+      © 2026 CityCare Diagnostic Center Ltd. · 01789-555666
+    </footer>
+
+    <script>
+      if (typeof lucide !== "undefined") lucide.createIcons();
+
+      function fileKind(filename) {
+        const ext = (filename || "").split(".").pop().toLowerCase();
+        if (ext === "pdf") return "pdf";
+        if (["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) return "image";
+        return "other";
+      }
+
+      async function loadReport() {
+        // Token is the last path segment of /report/<token>
+        const token = window.location.pathname.split("/").filter(Boolean).pop();
+
+        const loadingEl = document.getElementById("state-loading");
+        const errorEl = document.getElementById("state-error");
+        const loadedEl = document.getElementById("state-loaded");
+
+        try {
+          const res = await fetch(`/citycare/api/reports/${token}`);
+          if (!res.ok) throw new Error("not found");
+          const data = await res.json();
+
+          document.getElementById("patient-name").textContent = data.patientName;
+          document.getElementById("patient-phone").textContent = data.phone;
+          document.getElementById("patient-date").textContent = data.testDate;
+
+          const downloadBtn = document.getElementById("download-btn");
+          downloadBtn.href = data.fileUrl;
+          downloadBtn.setAttribute("download", data.originalFilename || "report");
+
+          const mount = document.getElementById("viewer-mount");
+          const kind = fileKind(data.originalFilename);
+
+          if (kind === "pdf") {
+            mount.innerHTML = `<iframe src="${data.fileUrl}" class="w-full h-[70vh] border-0"></iframe>`;
+          } else if (kind === "image") {
+            mount.innerHTML = `<img src="${data.fileUrl}" alt="Diagnostic report" class="w-full h-auto" />`;
+          } else {
+            mount.innerHTML = `
+              <div class="p-10 text-center text-slate-500 text-sm">
+                <i data-lucide="file-text" class="h-8 w-8 mx-auto mb-2 text-slate-400"></i>
+                Preview isn't available for this file type. Use the download button below.
+              </div>`;
+            if (typeof lucide !== "undefined") lucide.createIcons();
+          }
+
+          loadingEl.classList.add("hidden");
+          loadedEl.classList.remove("hidden");
+        } catch (err) {
+          loadingEl.classList.add("hidden");
+          errorEl.classList.remove("hidden");
+        }
+      }
+
+      loadReport();
+    </script>
+  </body>
+</html>

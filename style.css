@@ -1,0 +1,74 @@
+/* style.css - Custom styles for CityCare Diagnostic & Consultation Center */
+
+:root {
+  --primary-color: #0284c7; /* Brand Blue (Sky 600) */
+  --primary-dark: #0369a1; /* Darker Blue (Sky 700) */
+  --secondary-color: #0f172a; /* Tech Dark (Slate 900) */
+}
+
+/* Enable smooth scrolling across the website */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+}
+
+/* A very gentle gradient background for hero sections and highlighted cards */
+.hero-gradient {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+/* Customized scrollbar for a polished look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Floating WhatsApp pulse beacon animation */
+@keyframes whatsapp-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.whatsapp-btn-pulse {
+  animation: whatsapp-pulse 2.5s infinite;
+}
+
+/* Print layout optimizations for medical reports */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #report-printable, #report-printable * {
+    visibility: visible;
+  }
+  #report-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: white;
+    color: black;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
