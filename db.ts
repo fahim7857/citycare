@@ -105,6 +105,112 @@ db.exec(`
   );
 `);
 
+// Safe incremental migration for appointments table columns
+const existingApptColumns = db
+  .prepare("PRAGMA table_info(appointments)")
+  .all()
+  .map((row: any) => row.name);
+
+const requiredApptColumns: Record<string, string> = {
+  booking_reference: "TEXT",
+  access_token: "TEXT",
+  payment_method: "TEXT NOT NULL DEFAULT 'center'",
+  payment_sender_phone: "TEXT",
+  transaction_id: "TEXT",
+  payment_status: "TEXT NOT NULL DEFAULT 'unpaid'",
+  payment_verified_at: "TEXT",
+  payment_verified_by: "TEXT",
+  approved_at: "TEXT",
+  approved_by: "TEXT",
+  notes: "TEXT",
+};
+
+for (const [colName, colDef] of Object.entries(requiredApptColumns)) {
+  if (!existingApptColumns.includes(colName)) {
+    db.exec(`ALTER TABLE appointments ADD COLUMN ${colName} ${colDef};`);
+  }
+}
+
+// Table 6: settings — configurable payment numbers, instructions, toggles
+db.exec(`
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+`);
+
+// Table 7: appointment audit events
+db.exec(`
+  CREATE TABLE IF NOT EXISTS appointment_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    appointment_id INTEGER NOT NULL,
+    event_type TEXT NOT NULL,
+    admin_username TEXT,
+    details TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id)
+  );
+`);
+
+// Performance & lookup indexes
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_appointments_phone ON appointments(patient_phone);
+  CREATE INDEX IF NOT EXISTS idx_appointments_ref ON appointments(booking_reference);
+  CREATE INDEX IF NOT EXISTS idx_appointments_token ON appointments(access_token);
+  CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
+  CREATE INDEX IF NOT EXISTS idx_appointments_payment_status ON appointments(payment_status);
+  CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(appointment_date);
+  CREATE INDEX IF NOT EXISTS idx_appointments_created ON appointments(created_at);
+  CREATE INDEX IF NOT EXISTS idx_reports_phone ON reports(patient_phone);
+  CREATE INDEX IF NOT EXISTS idx_reports_report_id ON reports(report_id);
+`);
+
+// Seed default settings if not existing
+const defaultSettings: Record<string, string> = {
+  bkash_number: "01789555666",
+  bkash_enabled: "1",
+  bkash_instructions: "বিকাশ অ্যাপ অথবা *247# ডায়াল করে আমাদের মার্চেন্ট/পার্সোনাল নম্বরে সেন্ড মানি করুন। এরপর প্রাপ্ত TrxID এবং আপনার বিকাশ নম্বর নিচে পূরণ করুন।",
+  nagad_number: "01789555666",
+  nagad_enabled: "1",
+  nagad_instructions: "নগদ অ্যাপ অথবা *167# ডায়াল করে আমাদের নম্বরে সেন্ড মানি করুন। এরপর প্রাপ্ত TrxID এবং আপনার নগদ নম্বর নিচে লিখুন।",
+  pay_at_center_enabled: "1",
+  pay_at_center_instructions: "সরাসরি ডায়াগনস্টিক সেন্টারের ক্যাশ কাউন্টারে এসে ফি পরিশোধ করুন। আপনার বুকিং অনুমোদনের জন্য অপেক্ষমান থাকবে।",
+  center_name: "CityCare Diagnostic & Consultation Center",
+  center_hotline: "01789-555666",
+  center_address: "House #12, Road #3, Block #B, Mirpur 10, Dhaka - 1216",
+};
+
+const insertSetting = db.prepare(`
+  INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)
+`);
+
+for (const [key, val] of Object.entries(defaultSettings)) {
+  insertSetting.run(key, val);
+}
+
+export function getSetting(key: string, defaultValue = ""): string {
+  const row = db.prepare("SELECT value FROM settings WHERE key = ?").get(key) as any;
+  return row ? row.value : defaultValue;
+}
+
+export function getAllSettings(): Record<string, string> {
+  const rows = db.prepare("SELECT key, value FROM settings").all() as any[];
+  const map: Record<string, string> = {};
+  for (const r of rows) {
+    map[r.key] = r.value;
+  }
+  return map;
+}
+
+export function updateSetting(key: string, value: string): void {
+  db.prepare(`
+    INSERT INTO settings (key, value, updated_at)
+    VALUES (?, ?, datetime('now'))
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+  `).run(key, value);
+}
+
 // One-time seed: if no doctors exist yet (fresh install, or first run after
 // this feature was added), pre-populate with the doctors that used to be
 // hardcoded on the homepage, so the booking form and dashboard aren't empty

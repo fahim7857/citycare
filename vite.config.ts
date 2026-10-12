@@ -21,6 +21,12 @@ export default defineConfig(() => {
         // explicitly or they simply won't exist in dist/ after `npm run build`.
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          doctors: path.resolve(__dirname, 'doctors.html'),
+          appointment: path.resolve(__dirname, 'appointment.html'),
+          appointmentHistory: path.resolve(__dirname, 'appointment-history.html'),
+          reports: path.resolve(__dirname, 'reports.html'),
+          contact: path.resolve(__dirname, 'contact.html'),
+          receipt: path.resolve(__dirname, 'receipt.html'),
           adminUpload: path.resolve(__dirname, 'admin-upload.html'),
           adminLogin: path.resolve(__dirname, 'admin-login.html'),
           adminDashboard: path.resolve(__dirname, 'admin-dashboard.html'),

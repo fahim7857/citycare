@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>অ্যাপয়েন্টমেন্ট বুকিং — CityCare Diagnostic Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Hanken Grotesk', 'Inter', 'sans-serif'],
+              display: ['Manrope', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
+      .font-display { font-family: 'Manrope', sans-serif; }
+      @keyframes whatsapp-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+        70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+      }
+      .whatsapp-btn-pulse { animation: whatsapp-pulse 2.5s infinite; }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- GLOBAL HEADER -->
+    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          
+          <!-- Logo -->
+          <a href="/citycare/" class="flex items-center space-x-3">
+            <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
+              <i data-lucide="activity" class="h-6 w-6"></i>
+            </div>
+            <div>
+              <span class="text-xl font-extrabold text-slate-900 tracking-tight font-display block">CityCare</span>
+              <span class="text-xs text-sky-600 font-bold tracking-wider uppercase block -mt-1">Diagnostic Center</span>
+            </div>
+          </a>
+
+          <!-- Navigation -->
+          <nav class="hidden md:flex space-x-8 h-full">
+            <a href="/citycare/" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              হোম / Home
+            </a>
+            <a href="/citycare/doctors.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              ডাক্তারগণ / Doctors
+            </a>
+            <a href="/citycare/appointment.html" class="text-sky-600 border-b-2 border-sky-600 font-bold px-1 inline-flex items-center text-sm h-full transition-colors">
+              অ্যাপয়েন্টমেন্ট / Appointment
+            </a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              বুকিং ইতিহাস / Status
+            </a>
+            <a href="/citycare/reports.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              রিপোর্ট / Online Report
+            </a>
+            <a href="/citycare/contact.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              যোগাযোগ / Contact
+            </a>
+          </nav>
+
+          <!-- Top Actions -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="tel:01789555666" class="flex items-center space-x-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors">
+              <i data-lucide="phone-call" class="h-4 w-4 text-sky-600"></i>
+              <span>01789-555666</span>
+            </a>
+            <a href="/citycare/admin-login.html" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-slate-900/10 transition-all">
+              Staff Login
+            </a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <div class="md:hidden flex items-center">
+            <button id="menu-btn" class="text-slate-700 hover:text-sky-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+              <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm">
+      <div class="bg-white w-4/5 max-w-sm h-full p-6 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <div class="bg-sky-600 text-white p-2 rounded-lg">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-900 font-display">CityCare</span>
+            </div>
+            <button id="close-menu-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+              <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+          <nav class="flex flex-col space-y-3 py-6">
+            <a href="/citycare/" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">হোম / Home</a>
+            <a href="/citycare/doctors.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">ডাক্তারগণ / Doctors</a>
+            <a href="/citycare/appointment.html" class="text-sky-600 bg-sky-50 font-bold text-base py-2 px-3 rounded-lg block transition-colors">অ্যাপয়েন্টমেন্ট / Appointment</a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">বুকিং ইতিহাস / Status</a>
+            <a href="/citycare/reports.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অনলাইন রিপোর্ট / Online Report</a>
+            <a href="/citycare/contact.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">যোগাযোগ / Contact</a>
+            <a href="/citycare/admin-login.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 flex items-center gap-2 transition-colors border-t border-slate-100 mt-2 pt-4">
+              <i data-lucide="lock" class="h-4 w-4 text-sky-600"></i>
+              <span>Staff Login</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <main class="flex-grow py-12 md:py-16">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6">
+
+        <div class="text-center space-y-3 mb-10">
+          <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-100/80 px-3 py-1 rounded-full inline-block">
+            Doctor Appointment Portal
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+            ডাক্তার অ্যাপয়েন্টমেন্ট বুকিং
+          </h1>
+          <p class="text-sm text-slate-500 max-w-md mx-auto">
+            চেম্বারের সিরিয়াল নিশ্চিত করতে রোগীর তথ্য এবং সুবিধাজনক পেমেন্ট পদ্ধতি নির্বাচন করুন।
+          </p>
+        </div>
+
+        <!-- FORM CONTAINER -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+          
+          <!-- BOOKING FORM -->
+          <form id="booking-form" class="p-6 sm:p-10 space-y-6">
+
+            <!-- Name and Phone -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label for="patient-name" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  রোগীর পুরো নাম / Full Name *
+                </label>
+                <input type="text" id="patient-name" required placeholder="যেমন: মো: কামরুল হাসান"
+                  class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 placeholder:text-slate-400 outline-none transition-all" />
+              </div>
+
+              <div>
+                <label for="patient-phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  মোবাইল নম্বর / Mobile Number *
+                </label>
+                <input type="tel" id="patient-phone" required placeholder="017XXXXXXXX"
+                  class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 placeholder:text-slate-400 outline-none transition-all font-mono" />
+              </div>
+            </div>
+
+            <!-- Department Category -->
+            <div>
+              <label for="dept-select" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                বিভাগ বা স্পেশালিটি / Department *
+              </label>
+              <select id="dept-select" required disabled
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 outline-none transition-all disabled:bg-slate-100 disabled:cursor-not-allowed">
+                <option disabled selected value="">বিভাগ লোড হচ্ছে... / Loading departments...</option>
+              </select>
+            </div>
+
+            <!-- Doctor Selector -->
+            <div>
+              <label for="doctor-select" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                ডাক্তার নির্বাচন করুন / Doctor *
+              </label>
+              <select id="doctor-select" required disabled
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 outline-none transition-all disabled:bg-slate-100 disabled:cursor-not-allowed">
+                <option disabled selected value="">-- প্রথমে বিভাগ নির্বাচন করুন / Select Department First --</option>
+              </select>
+            </div>
+
+            <!-- Doctor Fee Banner (Dynamic) -->
+            <div id="doctor-fee-box" class="hidden bg-sky-50 border border-sky-100 p-4 rounded-2xl flex items-center justify-between text-xs font-semibold text-sky-800">
+              <span class="flex items-center gap-2">
+                <i data-lucide="badge-check" class="h-4 w-4 text-sky-600"></i>
+                <span id="selected-doctor-info">—</span>
+              </span>
+              <span class="text-sm font-extrabold text-sky-700" id="selected-doctor-fee">৳ —</span>
+            </div>
+
+            <!-- Preferred Appointment Date -->
+            <div>
+              <label for="appointment-date" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                পছন্দসই সাক্ষাতের তারিখ / Preferred Date *
+              </label>
+              <input type="date" id="appointment-date" required
+                class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 outline-none transition-all" />
+              <p class="text-[11px] text-slate-400 mt-1">নির্দিষ্ট কোনো সময় স্লট বাধ্যতামূলক নয়; কর্তৃপক্ষ শিডিউল অনুযায়ী সিরিয়াল সমন্বয় করবে।</p>
+            </div>
+
+            <!-- PAYMENT METHOD SELECTOR -->
+            <div class="border-t border-slate-100 pt-6">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
+                পেমেন্ট পদ্ধতি নির্বাচন করুন / Payment Method *
+              </label>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Method 1: Center -->
+                <label class="cursor-pointer">
+                  <input type="radio" name="payment-method" value="center" checked class="peer sr-only" />
+                  <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-sky-600 peer-checked:bg-sky-50/50 transition-all flex flex-col items-center text-center space-y-2 hover:border-slate-300">
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 peer-checked:bg-sky-100 text-slate-700 flex items-center justify-center">
+                      <i data-lucide="building-2" class="h-5 w-5"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-800">সরাসরি সেন্টারে পরিশোধ</span>
+                    <span class="text-[10px] text-slate-500">Pay at Diagnostic Center</span>
+                  </div>
+                </label>
+
+                <!-- Method 2: bKash -->
+                <label id="bkash-option-label" class="cursor-pointer">
+                  <input type="radio" name="payment-method" value="bkash" class="peer sr-only" />
+                  <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-pink-600 peer-checked:bg-pink-50/40 transition-all flex flex-col items-center text-center space-y-2 hover:border-slate-300">
+                    <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center font-extrabold text-sm font-display">
+                      bKash
+                    </div>
+                    <span class="text-xs font-bold text-slate-800">বিকাশ পেমেন্ট</span>
+                    <span class="text-[10px] text-slate-500">bKash Send Money</span>
+                  </div>
+                </label>
+
+                <!-- Method 3: Nagad -->
+                <label id="nagad-option-label" class="cursor-pointer">
+                  <input type="radio" name="payment-method" value="nagad" class="peer sr-only" />
+                  <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-orange-600 peer-checked:bg-orange-50/40 transition-all flex flex-col items-center text-center space-y-2 hover:border-slate-300">
+                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-extrabold text-sm font-display">
+                      Nagad
+                    </div>
+                    <span class="text-xs font-bold text-slate-800">নগদ পেমেন্ট</span>
+                    <span class="text-[10px] text-slate-500">Nagad Send Money</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- DYNAMIC PAYMENT INSTRUCTION PANELS -->
+
+            <!-- Panel A: Pay at Center -->
+            <div id="panel-center" class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2 text-xs text-slate-600">
+              <div class="flex items-center gap-2 font-bold text-slate-800">
+                <i data-lucide="info" class="h-4 w-4 text-sky-600"></i>
+                <span>সেন্টারে সরাসরি পরিশোধের নিয়ম</span>
+              </div>
+              <p id="center-instructions-text" class="leading-relaxed">
+                অনলাইনে কোনো পেমেন্ট পাঠাতে হবে না। ফর্ম জমা দিলে বুকিংটি অনুমোদনের জন্য অপেক্ষমান থাকবে। সেন্টারে উপস্থিত হয়ে ক্যাশ কাউন্টারে চেম্বার ফি পরিশোধ করতে হবে।
+              </p>
+            </div>
+
+            <!-- Panel B: bKash -->
+            <div id="panel-bkash" class="hidden bg-pink-50/50 border border-pink-200 rounded-2xl p-5 space-y-4">
+              <div class="flex items-start justify-between gap-4 border-b border-pink-200/60 pb-3">
+                <div>
+                  <h4 class="text-xs font-bold text-pink-900 uppercase tracking-wider">বিকাশ পেমেন্ট নির্দেশনা</h4>
+                  <p id="bkash-instructions-text" class="text-xs text-pink-800 mt-1 leading-relaxed">
+                    নিচের নম্বরে বিকাশ অ্যাপ বা *247# ডায়াল করে চেম্বার ফি সেন্ড মানি করুন।
+                  </p>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="text-[10px] font-bold text-pink-700 uppercase">বিকাশ নম্বর</span>
+                  <p id="bkash-display-number" class="text-base font-extrabold text-pink-900 font-mono tracking-wider">—</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="bkash-sender-phone" class="block text-xs font-bold text-pink-900 uppercase tracking-wider mb-1">
+                    প্রেরক বিকাশ নম্বর / Sender bKash Number *
+                  </label>
+                  <input type="tel" id="bkash-sender-phone" placeholder="01XXXXXXXXX"
+                    class="w-full bg-white rounded-xl border border-pink-200 px-4 py-2.5 text-sm focus:border-pink-600 focus:ring-2 focus:ring-pink-600/10 outline-none font-mono" />
+                </div>
+                <div>
+                  <label for="bkash-trx-id" class="block text-xs font-bold text-pink-900 uppercase tracking-wider mb-1">
+                    বিকাশ ট্রানজেকশন আইডি / TrxID *
+                  </label>
+                  <input type="text" id="bkash-trx-id" placeholder="যেমন: BKH98X12AB"
+                    class="w-full bg-white rounded-xl border border-pink-200 px-4 py-2.5 text-sm focus:border-pink-600 focus:ring-2 focus:ring-pink-600/10 outline-none font-mono uppercase" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel C: Nagad -->
+            <div id="panel-nagad" class="hidden bg-orange-50/50 border border-orange-200 rounded-2xl p-5 space-y-4">
+              <div class="flex items-start justify-between gap-4 border-b border-orange-200/60 pb-3">
+                <div>
+                  <h4 class="text-xs font-bold text-orange-900 uppercase tracking-wider">নগদ পেমেন্ট নির্দেশনা</h4>
+                  <p id="nagad-instructions-text" class="text-xs text-orange-800 mt-1 leading-relaxed">
+                    নিচের নম্বরে নগদ অ্যাপ বা *167# ডায়াল করে চেম্বার ফি সেন্ড মানি করুন।
+                  </p>
+                </div>
+                <div class="text-right shrink-0">
+                  <span class="text-[10px] font-bold text-orange-700 uppercase">নগদ নম্বর</span>
+                  <p id="nagad-display-number" class="text-base font-extrabold text-orange-900 font-mono tracking-wider">—</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="nagad-sender-phone" class="block text-xs font-bold text-orange-900 uppercase tracking-wider mb-1">
+                    প্রেরক নগদ নম্বর / Sender Nagad Number *
+                  </label>
+                  <input type="tel" id="nagad-sender-phone" placeholder="01XXXXXXXXX"
+                    class="w-full bg-white rounded-xl border border-orange-200 px-4 py-2.5 text-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/10 outline-none font-mono" />
+                </div>
+                <div>
+                  <label for="nagad-trx-id" class="block text-xs font-bold text-orange-900 uppercase tracking-wider mb-1">
+                    নগদ ট্রানজেকশন আইডি / TrxID *
+                  </label>
+                  <input type="text" id="nagad-trx-id" placeholder="যেমন: NGD76Q98KL"
+                    class="w-full bg-white rounded-xl border border-orange-200 px-4 py-2.5 text-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/10 outline-none font-mono uppercase" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Notes (Optional) -->
+            <div>
+              <label for="booking-notes" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                অতিরিক্ত তথ্য বা নোট (ঐচ্ছিক)
+              </label>
+              <textarea id="booking-notes" rows="2" placeholder="পূর্বের চিকিৎসার তথ্য বা অন্য কোনো নোট থাকলে লিখতে পারেন..."
+                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 placeholder:text-slate-400 outline-none"></textarea>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="pt-2">
+              <button type="submit" id="submit-btn"
+                class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-sky-600/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-base">
+                <i data-lucide="check-circle" class="h-5 w-5"></i>
+                <span>অ্যাপয়েন্টমেন্ট বুকিং সম্পন্ন করুন</span>
+              </button>
+            </div>
+
+          </form>
+
+          <!-- SUCCESS VOUCHER VIEW -->
+          <div id="booking-success" class="hidden p-6 sm:p-10 space-y-6 text-center">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto shadow-inner">
+              <i data-lucide="badge-check" class="h-9 w-9"></i>
+            </div>
+
+            <div>
+              <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full inline-block">
+                বুকিং সম্পন্ন হয়েছে
+              </span>
+              <h2 class="text-2xl font-extrabold text-slate-900 mt-2 font-display">
+                আপনার অ্যাপয়েন্টমেন্ট সফলভাবে গৃহীত হয়েছে
+              </h2>
+              <p id="success-msg" class="text-xs text-slate-500 max-w-md mx-auto mt-1 leading-relaxed">
+                কর্তৃপক্ষ আপনার তথ্য যাচাই করে সিরিয়াল নিশ্চিত করবে।
+              </p>
+            </div>
+
+            <!-- Details Card -->
+            <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 text-left max-w-lg mx-auto space-y-3 text-xs">
+              <div class="flex justify-between border-b border-slate-200/60 pb-2">
+                <span class="text-slate-500">বুকিং রেফারেন্স:</span>
+                <span id="v-ref" class="font-mono font-extrabold text-slate-900 text-sm">—</span>
+              </div>
+              <div class="flex justify-between border-b border-slate-200/60 pb-2">
+                <span class="text-slate-500">রোগীর নাম:</span>
+                <span id="v-name" class="font-bold text-slate-800">—</span>
+              </div>
+              <div class="flex justify-between border-b border-slate-200/60 pb-2">
+                <span class="text-slate-500">ডাক্তার:</span>
+                <span id="v-doctor" class="font-bold text-sky-700">—</span>
+              </div>
+              <div class="flex justify-between border-b border-slate-200/60 pb-2">
+                <span class="text-slate-500">তারিখ:</span>
+                <span id="v-date" class="font-semibold text-slate-800">—</span>
+              </div>
+              <div class="flex justify-between border-b border-slate-200/60 pb-2">
+                <span class="text-slate-500">পেমেন্ট মেথড:</span>
+                <span id="v-payment-method" class="font-bold text-slate-800 capitalize">—</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">পেমেন্ট স্ট্যাটাস:</span>
+                <span id="v-payment-status" class="font-bold text-amber-700">—</span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto pt-2">
+              <a id="receipt-download-link" href="#" target="_blank"
+                class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-sky-600/15 flex items-center justify-center gap-2 text-xs transition-all">
+                <i data-lucide="printer" class="h-4 w-4"></i>
+                <span>রসিদ দেখুন / Download Receipt</span>
+              </a>
+              <a id="whatsapp-confirm-link" href="#" target="_blank"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-emerald-600/15 flex items-center justify-center gap-2 text-xs transition-all">
+                <i data-lucide="message-circle" class="h-4 w-4"></i>
+                <span>WhatsApp নিশ্চিতকরণ</span>
+              </a>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100">
+              <button onclick="resetBookingForm()" class="text-slate-500 hover:text-sky-600 text-xs font-semibold">
+                + আরেকটি অ্যাপয়েন্টমেন্ট বুকিং করুন
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 space-y-4 sm:space-y-0">
+          <p>© 2026 CityCare Diagnostic Center Ltd. · মিরপুর ১০, ঢাকা · হটলাইন: 01789-555666</p>
+          <div class="flex space-x-6">
+            <a href="/citycare/" class="hover:text-white">হোম</a>
+            <a href="/citycare/doctors.html" class="hover:text-white">ডাক্তারগণ</a>
+            <a href="/citycare/appointment-history.html" class="hover:text-white">বুকিং স্ট্যাটাস</a>
+            <a href="/citycare/reports.html" class="hover:text-white">অনলাইন রিপোর্ট</a>
+            <a href="/citycare/contact.html" class="hover:text-white">যোগাযোগ</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/8801789555666?text=আসসালামু আলাইকুম সিটি কেয়ার, আমি অ্যাপয়েন্টমেন্ট নিয়ে জানতে চাই।" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl whatsapp-btn-pulse flex items-center justify-center transition-all duration-300 hover:scale-110" aria-label="Chat on WhatsApp">
+      <i data-lucide="message-circle" class="h-6 w-6"></i>
+    </a>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+      const BASE_PATH = "/citycare";
+      let allDoctors = [];
+      let paymentConfig = null;
+
+      // Mobile Menu
+      const mobileMenu = document.getElementById("mobile-menu");
+      document.getElementById("menu-btn")?.addEventListener("click", () => mobileMenu.classList.remove("hidden"));
+      document.getElementById("close-menu-btn")?.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+
+      // Date limits: min is today
+      const dateInput = document.getElementById("appointment-date");
+      if (dateInput) {
+        const todayStr = new Date().toISOString().split("T")[0];
+        dateInput.min = todayStr;
+        dateInput.value = todayStr;
+      }
+
+      // Load Payment Config
+      async function loadPaymentConfig() {
+        try {
+          const res = await fetch(`${BASE_PATH}/api/payment-config`);
+          if (!res.ok) throw new Error("Payment config error");
+          paymentConfig = await res.json();
+
+          // bKash setup
+          if (paymentConfig.bkash) {
+            document.getElementById("bkash-display-number").textContent = paymentConfig.bkash.number || "01789555666";
+            if (paymentConfig.bkash.instructions) {
+              document.getElementById("bkash-instructions-text").textContent = paymentConfig.bkash.instructions;
+            }
+            if (!paymentConfig.bkash.enabled) {
+              document.getElementById("bkash-option-label").classList.add("hidden");
+            }
+          }
+
+          // Nagad setup
+          if (paymentConfig.nagad) {
+            document.getElementById("nagad-display-number").textContent = paymentConfig.nagad.number || "01789555666";
+            if (paymentConfig.nagad.instructions) {
+              document.getElementById("nagad-instructions-text").textContent = paymentConfig.nagad.instructions;
+            }
+            if (!paymentConfig.nagad.enabled) {
+              document.getElementById("nagad-option-label").classList.add("hidden");
+            }
+          }
+
+          // Center setup
+          if (paymentConfig.payAtCenter?.instructions) {
+            document.getElementById("center-instructions-text").textContent = paymentConfig.payAtCenter.instructions;
+          }
+        } catch (err) {
+          console.error("Could not fetch payment config:", err);
+        }
+      }
+
+      // Load Doctors and populate departments
+      async function loadDoctors() {
+        const deptSelect = document.getElementById("dept-select");
+        try {
+          const res = await fetch(`${BASE_PATH}/api/doctors`);
+          if (!res.ok) throw new Error("Failed to load doctors");
+          allDoctors = await res.json();
+
+          const categories = [...new Set(allDoctors.map(d => d.specialty_category).filter(Boolean))];
+
+          deptSelect.innerHTML =
+            '<option disabled selected value="">-- বিভাগ নির্বাচন করুন / Choose Department --</option>' +
+            categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+          deptSelect.disabled = false;
+
+          // Check URL query parameters for prefill
+          const urlParams = new URLSearchParams(window.location.search);
+          const prefillCat = urlParams.get("category");
+          const prefillDocId = urlParams.get("doctorId");
+
+          if (prefillCat && categories.includes(prefillCat)) {
+            deptSelect.value = prefillCat;
+            populateDoctorSelect(prefillCat);
+            if (prefillDocId) {
+              const docSelect = document.getElementById("doctor-select");
+              docSelect.value = prefillDocId;
+              updateSelectedDoctorFee();
+            }
+          }
+        } catch (err) {
+          deptSelect.innerHTML = '<option disabled selected value="">বিভাগ লোড করা যায়নি, রিফ্রেশ করুন</option>';
+        }
+      }
+
+      function populateDoctorSelect(category) {
+        const docSelect = document.getElementById("doctor-select");
+        const filtered = allDoctors.filter(d => d.specialty_category === category);
+
+        if (!filtered.length) {
+          docSelect.innerHTML = '<option disabled selected value="">এই বিভাগে বর্তমানে কোনো ডাক্তার নেই</option>';
+          docSelect.disabled = true;
+          hideDoctorFee();
+          return;
+        }
+
+        docSelect.innerHTML =
+          '<option disabled selected value="">-- ডাক্তার নির্বাচন করুন / Choose Doctor --</option>' +
+          filtered.map(d => {
+            const extra = [d.degree, d.chamber_time].filter(Boolean).join(" | ");
+            return `<option value="${d.id}">${escapeHtml(d.name)}${extra ? ` (${escapeHtml(extra)})` : ''}</option>`;
+          }).join("");
+        docSelect.disabled = false;
+        hideDoctorFee();
+      }
+
+      function updateSelectedDoctorFee() {
+        const docSelect = document.getElementById("doctor-select");
+        const feeBox = document.getElementById("doctor-fee-box");
+        const docId = docSelect.value;
+        const doctor = allDoctors.find(d => String(d.id) === String(docId));
+
+        if (doctor) {
+          document.getElementById("selected-doctor-info").textContent = `${doctor.name} (${doctor.specialty_category})`;
+          document.getElementById("selected-doctor-fee").textContent = `৳ ${doctor.fee || 0}`;
+          feeBox.classList.remove("hidden");
+        } else {
+          hideDoctorFee();
+        }
+      }
+
+      function hideDoctorFee() {
+        document.getElementById("doctor-fee-box")?.classList.add("hidden");
+      }
+
+      document.getElementById("dept-select")?.addEventListener("change", (e) => {
+        populateDoctorSelect(e.target.value);
+      });
+
+      document.getElementById("doctor-select")?.addEventListener("change", updateSelectedDoctorFee);
+
+      // Payment Method switching
+      const paymentRadios = document.querySelectorAll('input[name="payment-method"]');
+      const panelCenter = document.getElementById("panel-center");
+      const panelBkash = document.getElementById("panel-bkash");
+      const panelNagad = document.getElementById("panel-nagad");
+
+      paymentRadios.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          const val = e.target.value;
+          // Hide all panels
+          panelCenter.classList.add("hidden");
+          panelBkash.classList.add("hidden");
+          panelNagad.classList.add("hidden");
+
+          // Clear inputs of non-active panels so stale info is not submitted
+          if (val === "center") {
+            panelCenter.classList.remove("hidden");
+            document.getElementById("bkash-sender-phone").value = "";
+            document.getElementById("bkash-trx-id").value = "";
+            document.getElementById("nagad-sender-phone").value = "";
+            document.getElementById("nagad-trx-id").value = "";
+          } else if (val === "bkash") {
+            panelBkash.classList.remove("hidden");
+            document.getElementById("nagad-sender-phone").value = "";
+            document.getElementById("nagad-trx-id").value = "";
+          } else if (val === "nagad") {
+            panelNagad.classList.remove("hidden");
+            document.getElementById("bkash-sender-phone").value = "";
+            document.getElementById("bkash-trx-id").value = "";
+          }
+        });
+      });
+
+      // Form Submission
+      const bookingForm = document.getElementById("booking-form");
+      const bookingSuccess = document.getElementById("booking-success");
+      const submitBtn = document.getElementById("submit-btn");
+
+      bookingForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const patientName = document.getElementById("patient-name").value.trim();
+        const patientPhone = document.getElementById("patient-phone").value.trim();
+        const doctorId = document.getElementById("doctor-select").value;
+        const appointmentDate = document.getElementById("appointment-date").value;
+        const notes = document.getElementById("booking-notes").value.trim();
+
+        const selectedMethodEl = document.querySelector('input[name="payment-method"]:checked');
+        const paymentMethod = selectedMethodEl ? selectedMethodEl.value : "center";
+
+        let senderPhone = null;
+        let transactionId = null;
+
+        if (paymentMethod === "bkash") {
+          senderPhone = document.getElementById("bkash-sender-phone").value.trim();
+          transactionId = document.getElementById("bkash-trx-id").value.trim();
+          if (!senderPhone || !transactionId) {
+            alert("অনুগ্রহ করে প্রেরক বিকাশ নম্বর এবং ট্রানজেকশন আইডি (TrxID) প্রদান করুন।");
+            return;
+          }
+        } else if (paymentMethod === "nagad") {
+          senderPhone = document.getElementById("nagad-sender-phone").value.trim();
+          transactionId = document.getElementById("nagad-trx-id").value.trim();
+          if (!senderPhone || !transactionId) {
+            alert("অনুগ্রহ করে প্রেরক নগদ নম্বর এবং ট্রানজেকশন আইডি (TrxID) প্রদান করুন।");
+            return;
+          }
+        }
+
+        const originalBtnHtml = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i data-lucide="loader-2" class="h-5 w-5 animate-spin"></i><span>জমা দেওয়া হচ্ছে...</span>';
+        if (typeof lucide !== "undefined") lucide.createIcons();
+
+        try {
+          const res = await fetch(`${BASE_PATH}/api/appointments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              patientName,
+              patientPhone,
+              doctorId: Number(doctorId),
+              appointmentDate,
+              paymentMethod,
+              senderPhone,
+              transactionId,
+              notes,
+            }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.error || "অ্যাপয়েন্টমেন্ট বুকিং সম্পন্ন করা যায়নি।");
+          }
+
+          // Populate success voucher
+          const doctorObj = allDoctors.find(d => String(d.id) === String(doctorId));
+          const doctorTitle = doctorObj ? `${doctorObj.name} (${doctorObj.specialty_category})` : "ডাক্তার";
+
+          document.getElementById("v-ref").textContent = data.bookingReference;
+          document.getElementById("v-name").textContent = patientName;
+          document.getElementById("v-doctor").textContent = doctorTitle;
+          document.getElementById("v-date").textContent = appointmentDate;
+          document.getElementById("v-payment-method").textContent =
+            paymentMethod === "center" ? "সরাসরি সেন্টারে পরিশোধ" : paymentMethod.toUpperCase();
+          document.getElementById("v-payment-status").textContent =
+            data.paymentStatus === "verification_pending" ? "যাচাই অপেক্ষমান (Verification Pending)" : "অপরিশোধিত (Unpaid)";
+          document.getElementById("success-msg").textContent = data.message;
+
+          // Receipt link
+          const receiptLink = document.getElementById("receipt-download-link");
+          receiptLink.href = data.receiptUrl;
+
+          // WhatsApp link
+          const whatsappBtn = document.getElementById("whatsapp-confirm-link");
+          const msg = `হ্যালো সিটি কেয়ার, আমি একটি অ্যাপয়েন্টমেন্ট বুক করেছি।\nরেফারেন্স: ${data.bookingReference}\nরোগীর নাম: ${patientName}\nডাক্তার: ${doctorTitle}\nতারিখ: ${appointmentDate}\nপেমেন্ট মেথড: ${paymentMethod.toUpperCase()}${transactionId ? `\nTrxID: ${transactionId}` : ''}\nদয়া করে কনফার্ম করুন।`;
+          whatsappBtn.href = `https://wa.me/8801789555666?text=${encodeURIComponent(msg)}`;
+
+          bookingForm.classList.add("hidden");
+          bookingSuccess.classList.remove("hidden");
+          window.scrollTo({ top: 100, behavior: "smooth" });
+          if (typeof lucide !== "undefined") lucide.createIcons();
+
+        } catch (err) {
+          alert(err.message);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+          if (typeof lucide !== "undefined") lucide.createIcons();
+        }
+      });
+
+      function resetBookingForm() {
+        bookingForm.reset();
+        document.getElementById("panel-center").classList.remove("hidden");
+        document.getElementById("panel-bkash").classList.add("hidden");
+        document.getElementById("panel-nagad").classList.add("hidden");
+        hideDoctorFee();
+        bookingSuccess.classList.add("hidden");
+        bookingForm.classList.remove("hidden");
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.createIcons();
+        loadPaymentConfig();
+        loadDoctors();
+      });
+    </script>
+  </body>
+</html>

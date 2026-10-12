@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointment Receipt — CityCare Diagnostic Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
+      .font-display { font-family: 'Manrope', sans-serif; }
+      @media print {
+        body { background: white !important; padding: 0 !important; }
+        .no-print { display: none !important; }
+        #receipt-card {
+          box-shadow: none !important;
+          border: 1px solid #cbd5e1 !important;
+          margin: 0 !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          border-radius: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-6 md:p-10">
+
+    <!-- TOP CONTROLS (NO PRINT) -->
+    <div class="max-w-2xl mx-auto w-full mb-4 flex items-center justify-between no-print">
+      <a href="/citycare/appointment-history.html" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-sky-600 transition-colors">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
+        <span>বুকিং ইতিহাস / Booking History</span>
+      </a>
+      <div class="flex items-center gap-3">
+        <button onclick="window.print()" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md shadow-sky-600/20 transition-all">
+          <i data-lucide="printer" class="h-4 w-4"></i>
+          <span>Print / Save PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN RECEIPT SLIP -->
+    <main class="max-w-2xl mx-auto w-full">
+
+      <!-- LOADING STATE -->
+      <div id="state-loading" class="bg-white rounded-3xl p-12 text-center shadow-sm border border-slate-200">
+        <div class="inline-block animate-spin text-sky-600 mb-3">
+          <i data-lucide="loader-2" class="h-8 w-8"></i>
+        </div>
+        <p class="text-sm font-medium text-slate-600">রসিদ তথ্য লোড হচ্ছে... / Loading appointment receipt...</p>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="state-error" class="hidden bg-white rounded-3xl p-10 text-center shadow-sm border border-rose-200 space-y-3">
+        <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto">
+          <i data-lucide="alert-circle" class="h-6 w-6"></i>
+        </div>
+        <h2 class="text-lg font-bold text-slate-900">রসিদ পাওয়া যায়নি / Receipt Not Found</h2>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto">প্রদত্ত রেফারেন্স বা টোকেন সঠিক নয়। অনুগ্রহ করে আপনার মোবাইল নম্বর দিয়ে বুকিং হিস্টোরি অনুসন্ধান করুন।</p>
+        <div class="pt-2">
+          <a href="/citycare/appointment-history.html" class="inline-block bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800">
+            বুকিং ট্র্যাক করুন
+          </a>
+        </div>
+      </div>
+
+      <!-- RECEIPT CONTENT CARD -->
+      <div id="receipt-card" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+        
+        <!-- HEADER BLOCK -->
+        <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-6 sm:p-8 relative overflow-hidden">
+          <div class="flex items-start justify-between gap-4 relative z-10">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <div class="bg-sky-500 p-1.5 rounded-lg text-white">
+                  <i data-lucide="activity" class="h-4 w-4"></i>
+                </div>
+                <span class="text-xs font-bold tracking-widest text-sky-400 uppercase font-display">CityCare Diagnostic Center</span>
+              </div>
+              <h1 id="r-center-name" class="text-xl sm:text-2xl font-extrabold tracking-tight">CityCare Diagnostic & Consultation Center</h1>
+              <p id="r-center-address" class="text-xs text-slate-300 mt-1">Mirpur 10, Dhaka · Hotline: 01789-555666</p>
+            </div>
+            <div class="text-right">
+              <span class="inline-block text-[10px] font-extrabold uppercase tracking-widest bg-sky-500/20 text-sky-300 border border-sky-400/30 px-2.5 py-1 rounded-full">
+                Booking Slip
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATUS BANNER -->
+        <div class="border-b border-slate-100 p-4 sm:p-6 bg-slate-50 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">বুকিং রেফারেন্স / Booking Reference</p>
+            <p id="r-ref" class="text-lg sm:text-xl font-extrabold text-slate-900 font-mono tracking-tight">—</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right mb-1">সিরিয়াল স্ট্যাটাস</p>
+              <span id="r-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold">
+                —
+              </span>
+            </div>
+            <div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right mb-1">পেমেন্ট স্ট্যাটাস</p>
+              <span id="r-payment-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold">
+                —
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DETAILS BODY -->
+        <div class="p-6 sm:p-8 space-y-6">
+
+          <!-- Patient & Appointment Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-slate-100">
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">রোগীর নাম / Patient Name</p>
+              <p id="r-patient-name" class="text-base font-extrabold text-slate-900">—</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">মোবাইল নম্বর / Phone Number</p>
+              <p id="r-patient-phone" class="text-base font-semibold text-slate-900 font-mono">—</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">পরামর্শক ডাক্তার / Doctor</p>
+              <p id="r-doctor-name" class="text-base font-extrabold text-slate-900 text-sky-700">—</p>
+              <p id="r-doctor-specialty" class="text-xs text-slate-500 font-medium">—</p>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">অ্যাপয়েন্টমেন্ট তারিখ / Date</p>
+              <p id="r-appointment-date" class="text-base font-bold text-slate-900">—</p>
+              <p id="r-time-slot" class="text-xs text-slate-500">—</p>
+            </div>
+          </div>
+
+          <!-- Payment Breakdown -->
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-3">
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 pb-2">
+              পেমেন্ট বিবরণী / Payment Details
+            </h3>
+            <div class="flex justify-between text-sm">
+              <span class="text-slate-600">পদ্ধতি / Payment Method:</span>
+              <span id="r-payment-method" class="font-bold text-slate-900 capitalize">—</span>
+            </div>
+            <div id="r-mobile-pay-details" class="hidden space-y-2 text-sm border-t border-slate-200/60 pt-2">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">প্রেরক মোবাইল নম্বর:</span>
+                <span id="r-sender-phone" class="font-mono font-semibold text-slate-800">—</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-500">ট্রানজেকশন আইডি (TrxID):</span>
+                <span id="r-trx-id" class="font-mono font-bold text-sky-700 uppercase">—</span>
+              </div>
+            </div>
+            <div class="flex justify-between text-sm border-t border-slate-200 pt-2">
+              <span class="font-bold text-slate-800">পরামর্শ ফি / Consultation Fee:</span>
+              <span id="r-doctor-fee" class="font-extrabold text-slate-900 text-base">৳ —</span>
+            </div>
+          </div>
+
+          <!-- AUDIT & VERIFICATION NOTICE -->
+          <div class="space-y-3">
+            <div id="r-verification-notice" class="p-4 rounded-xl text-xs leading-relaxed">
+              <!-- Dynamically populated notice based on payment & approval status -->
+            </div>
+
+            <!-- MANDATORY NON-REPORT DISCLAIMER -->
+            <div class="bg-amber-50 border border-amber-200/80 rounded-xl p-3.5 flex items-start gap-3 text-amber-900 text-xs">
+              <i data-lucide="info" class="h-4 w-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <div class="leading-relaxed">
+                <span class="font-bold">সতর্কীকরণ ও গুরুত্বপূর্ণ নোটিশ:</span> এই ডকুমেন্টটি শুধুমাত্র ডাক্তারের চেম্বার সিরিয়াল/অ্যাপয়েন্টমেন্ট বুকিংয়ের প্রাপ্তিস্বীকার রসিদ। এটি কোনো প্যাথলজিক্যাল বা ডায়াগনস্টিক টেস্ট রিপোর্ট নয়।
+              </div>
+            </div>
+          </div>
+
+          <!-- TIMESTAMPS FOOTER -->
+          <div class="border-t border-slate-100 pt-4 flex flex-wrap items-center justify-between text-[11px] text-slate-400">
+            <div>
+              <span>বুকিংয়ের সময়: </span>
+              <span id="r-created-at" class="font-medium text-slate-600">—</span>
+            </div>
+            <div id="r-approved-info" class="hidden">
+              <span>অনুমোদনের তারিখ: </span>
+              <span id="r-approved-at" class="font-medium text-slate-600">—</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- FOOTER (NO PRINT) -->
+    <footer class="max-w-2xl mx-auto w-full text-center text-xs text-slate-400 mt-6 no-print">
+      CityCare Diagnostic & Consultation Center · হটলাইন: 01789-555666
+    </footer>
+
+    <script>
+      const BASE_PATH = "/citycare";
+
+      async function loadReceipt() {
+        // Extract token from URL path e.g. /citycare/receipt/<token> or query ?token=...
+        const pathParts = window.location.pathname.split("/");
+        const tokenFromPath = pathParts[pathParts.length - 1];
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token") || tokenFromPath;
+
+        const stateLoading = document.getElementById("state-loading");
+        const stateError = document.getElementById("state-error");
+        const receiptCard = document.getElementById("receipt-card");
+
+        if (!token || token === "receipt.html" || token === "receipt") {
+          stateLoading.classList.add("hidden");
+          stateError.classList.remove("hidden");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${BASE_PATH}/api/appointments/receipt/${encodeURIComponent(token)}`);
+          if (!res.ok) throw new Error("Receipt not found");
+          const data = await res.json();
+
+          // Render details
+          document.getElementById("r-center-name").textContent = data.centerName;
+          document.getElementById("r-center-address").textContent = `${data.centerAddress} · হটলাইন: ${data.centerHotline}`;
+          document.getElementById("r-ref").textContent = data.bookingReference;
+          document.getElementById("r-patient-name").textContent = data.patientName;
+          document.getElementById("r-patient-phone").textContent = data.patientPhone;
+          document.getElementById("r-doctor-name").textContent = data.doctorName;
+          document.getElementById("r-doctor-specialty").textContent = [data.doctorSpecialty, data.doctorDegree].filter(Boolean).join(" · ");
+          document.getElementById("r-appointment-date").textContent = data.appointmentDate;
+          document.getElementById("r-time-slot").textContent = data.timeSlot ? `সময় স্লট: ${data.timeSlot}` : "সময় স্লট: সাধারণ শিডিউল";
+          document.getElementById("r-doctor-fee").textContent = `৳ ${data.doctorFee || 0}`;
+          document.getElementById("r-created-at").textContent = data.createdAt;
+
+          // Status badge
+          const statusBadge = document.getElementById("r-status-badge");
+          if (data.status === "confirmed") {
+            statusBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+            statusBadge.innerHTML = '<i data-lucide="check-circle" class="h-3.5 w-3.5 text-emerald-600"></i> অনুমোদিত / Confirmed';
+          } else if (data.status === "cancelled") {
+            statusBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200";
+            statusBadge.innerHTML = '<i data-lucide="x-circle" class="h-3.5 w-3.5 text-rose-600"></i> বাতিলকৃত / Cancelled';
+          } else {
+            statusBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200";
+            statusBadge.innerHTML = '<i data-lucide="clock" class="h-3.5 w-3.5 text-amber-600"></i> অপেক্ষমান / Pending Approval';
+          }
+
+          // Payment badge
+          const paymentBadge = document.getElementById("r-payment-badge");
+          if (data.paymentStatus === "verified") {
+            paymentBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200";
+            paymentBadge.innerHTML = '<i data-lucide="check-check" class="h-3.5 w-3.5 text-emerald-600"></i> পেমেন্ট যাচাইকৃত / Verified';
+          } else if (data.paymentStatus === "verification_pending") {
+            paymentBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200";
+            paymentBadge.innerHTML = '<i data-lucide="loader" class="h-3.5 w-3.5 text-amber-600"></i> যাচাই অপেক্ষমান / Verification Pending';
+          } else if (data.paymentStatus === "rejected") {
+            paymentBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200";
+            paymentBadge.innerHTML = '<i data-lucide="alert-triangle" class="h-3.5 w-3.5 text-rose-600"></i> পেমেন্ট বাতিল / Rejected';
+          } else {
+            paymentBadge.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-800 border border-slate-300";
+            paymentBadge.innerHTML = '<i data-lucide="clock" class="h-3.5 w-3.5 text-slate-600"></i> অপরিশোধিত / Unpaid (Pay at Center)';
+          }
+
+          // Payment method
+          const methodEl = document.getElementById("r-payment-method");
+          const mobileDetails = document.getElementById("r-mobile-pay-details");
+          if (data.paymentMethod === "bkash") {
+            methodEl.textContent = "bKash (বিকাশ মোবাইল পেমেন্ট)";
+            mobileDetails.classList.remove("hidden");
+            document.getElementById("r-sender-phone").textContent = data.paymentSenderPhone || "—";
+            document.getElementById("r-trx-id").textContent = data.transactionId || "—";
+          } else if (data.paymentMethod === "nagad") {
+            methodEl.textContent = "Nagad (নগদ মোবাইল পেমেন্ট)";
+            mobileDetails.classList.remove("hidden");
+            document.getElementById("r-sender-phone").textContent = data.paymentSenderPhone || "—";
+            document.getElementById("r-trx-id").textContent = data.transactionId || "—";
+          } else {
+            methodEl.textContent = "Pay at Diagnostic Center (সরাসরি সেন্টারে পরিশোধ)";
+            mobileDetails.classList.add("hidden");
+          }
+
+          // Verification notice
+          const noticeEl = document.getElementById("r-verification-notice");
+          if (data.paymentStatus === "verified") {
+            noticeEl.className = "p-4 rounded-xl text-xs bg-emerald-50 border border-emerald-200 text-emerald-900";
+            noticeEl.innerHTML = `<strong>পেমেন্ট নিশ্চিতকরণ:</strong> আপনার পেমেন্ট অ্যাডমিন কর্তৃক ব্যাংক/স্টেটমেন্টের সাথে মিলিয়ে সফলভাবে যাচাই করা হয়েছে। চেম্বারে উপস্থিতির সময় এই রসিদ প্রদর্শন করুন।`;
+          } else if (data.paymentStatus === "verification_pending") {
+            noticeEl.className = "p-4 rounded-xl text-xs bg-amber-50 border border-amber-200 text-amber-900";
+            noticeEl.innerHTML = `<strong>পেমেন্ট যাচাইকরণ নোটিশ:</strong> ট্রানজেকশন আইডি (${data.transactionId || "TrxID"}) জমা হয়েছে। কর্তৃপক্ষ পেমেন্ট কনফার্ম করার পর এটি 'Verified' হিসেবে চিহ্নিত হবে। ট্রানজেকশন সাবমিট করা স্বয়ংক্রিয়ভাবে পরিশোধের চূড়ান্ত প্রমাণ নয়।`;
+          } else {
+            noticeEl.className = "p-4 rounded-xl text-xs bg-slate-100 border border-slate-200 text-slate-800";
+            noticeEl.innerHTML = `<strong>অফলাইন পেমেন্ট:</strong> সেন্টারে পৌঁছানোর পর রিসেপশন ক্যাশ কাউন্টারে চেম্বার ফি পরিশোধ করুন। কাউন্টার থেকে অফিশিয়াল পেমেন্ট সিল সংগ্রহ করুন।`;
+          }
+
+          if (data.approvedAt) {
+            document.getElementById("r-approved-info").classList.remove("hidden");
+            document.getElementById("r-approved-at").textContent = data.approvedAt;
+          }
+
+          stateLoading.classList.add("hidden");
+          receiptCard.classList.remove("hidden");
+          if (typeof lucide !== "undefined") lucide.createIcons();
+
+        } catch (err) {
+          stateLoading.classList.add("hidden");
+          stateError.classList.remove("hidden");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.createIcons();
+        loadReceipt();
+      });
+    </script>
+  </body>
+</html>

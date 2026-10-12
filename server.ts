@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
-import { db, UPLOADS_DIR } from "./db";
+import { db, UPLOADS_DIR, getSetting, getAllSettings, updateSetting } from "./db";
 
 // NOTE ON ENV VARS: this project's _env.example was written for AI
 // Studio/Cloud Run, which auto-injects GEMINI_API_KEY, APP_URL, and
@@ -43,13 +43,12 @@ app.set("trust proxy", 1);
 
 // cPanel/Passenger assigns the actual port at runtime via process.env.PORT.
 // Hardcoding 3000 can prevent the app from binding correctly on cPanel.
-const PORT = process.env.PORT || 3000;
+const rawPort = process.env.PORT || 3000;
+const PORT: number = typeof rawPort === "number" ? rawPort : parseInt(String(rawPort), 10) || 3000;
 
-// This app is deployed under renbora.com/citycare/ instead of the domain
-// root. BASE_PATH must exactly match:
-//   1. The path in cPanel's "Setup Node.js App" -> Application URL
-//   2. The `base` value set in vite.config.ts
-const BASE_PATH = "/citycare";
+// Application base path (defaults to /citycare, or process.env.BASE_PATH)
+// Must match cPanel's "Setup Node.js App" -> Application URL
+const BASE_PATH = process.env.BASE_PATH || "/citycare";
 
 // TEMPORARY DIAGNOSTIC — remove once routing is confirmed fixed.
 // Logs exactly what path/host Apache+Passenger hand to Express, so you
@@ -195,12 +194,39 @@ router.get("/admin-dashboard.html", (req, res) => {
   res.sendFile(filePath);
 });
 
-// API: List every uploaded report, newest first. Used by admin-dashboard.html.
+// API: List uploaded reports with search by report ID, phone number, or patient name.
 router.get("/api/reports", requireAdminAuth, (req, res) => {
-  const reports = db
-    .prepare("SELECT * FROM reports ORDER BY created_at DESC")
-    .all();
+  const search = (req.query.search as string || "").trim();
+  const phone = (req.query.phone as string || "").trim();
+  const reportId = (req.query.reportId as string || "").trim();
 
+  let query = "SELECT * FROM reports WHERE 1=1";
+  const params: any[] = [];
+
+  if (reportId) {
+    query += " AND UPPER(report_id) LIKE ?";
+    params.push(`%${reportId.toUpperCase()}%`);
+  }
+
+  if (phone) {
+    const cleanPhone = phone.replace(/\D/g, "");
+    query += " AND REPLACE(REPLACE(REPLACE(patient_phone, ' ', ''), '-', ''), '+', '') LIKE ?";
+    params.push(`%${cleanPhone}%`);
+  }
+
+  if (search && !reportId && !phone) {
+    const cleanDigits = search.replace(/\D/g, "");
+    query += ` AND (
+      UPPER(COALESCE(report_id, '')) LIKE ?
+      OR patient_name LIKE ?
+      ${cleanDigits.length >= 3 ? "OR REPLACE(REPLACE(REPLACE(patient_phone, ' ', ''), '-', ''), '+', '') LIKE ?" : "OR patient_phone LIKE ?"}
+    )`;
+    params.push(`%${search.toUpperCase()}%`, `%${search}%`, `%${cleanDigits.length >= 3 ? cleanDigits : search}%`);
+  }
+
+  query += " ORDER BY created_at DESC";
+
+  const reports = db.prepare(query).all(...params);
   res.json(reports);
 });
 
@@ -487,66 +513,492 @@ router.delete("/api/doctors/:id", requireAdminAuth, (req, res) => {
 });
 
 // ============================================================
-// APPOINTMENTS — patient bookings from the public site, managed
-// from the admin dashboard.
+// APPOINTMENTS & PAYMENTS — Public booking, payment workflows,
+// patient tracking, receipts, and admin management.
 // ============================================================
 
-// API: Patient books an appointment with a doctor. Public — no login
-// required, since this is meant to be filled out by patients on the
-// homepage booking form.
+// Rate limiter for patient appointment status tracking to prevent phone enumeration
+const trackingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: { error: "Too many status check attempts. Please wait 15 minutes before trying again." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Helper: generate friendly unique booking reference like CC-APP-20261012-7890
+function generateBookingReference(): string {
+  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  return `CC-APP-${dateStr}-${randomSuffix}`;
+}
+
+// API: Public payment configuration for the booking form
+router.get("/api/payment-config", (_req, res) => {
+  const settings = getAllSettings();
+  res.json({
+    bkash: {
+      enabled: settings.bkash_enabled === "1",
+      number: settings.bkash_number || "01789555666",
+      instructions: settings.bkash_instructions || "",
+    },
+    nagad: {
+      enabled: settings.nagad_enabled === "1",
+      number: settings.nagad_number || "01789555666",
+      instructions: settings.nagad_instructions || "",
+    },
+    payAtCenter: {
+      enabled: settings.pay_at_center_enabled === "1",
+      instructions: settings.pay_at_center_instructions || "",
+    },
+    centerInfo: {
+      name: settings.center_name || "CityCare Diagnostic & Consultation Center",
+      hotline: settings.center_hotline || "01789-555666",
+      address: settings.center_address || "Mirpur 10, Dhaka",
+    },
+  });
+});
+
+// API: Patient books an appointment.
+// Mandatory time-slot removed; payment method supports Center / bKash / Nagad.
 router.post("/api/appointments", (req, res) => {
-  const { patientName, patientPhone, doctorId, appointmentDate, timeSlot } = req.body;
+  const {
+    patientName,
+    patientPhone,
+    doctorId,
+    appointmentDate,
+    timeSlot,
+    paymentMethod = "center",
+    senderPhone,
+    transactionId,
+    notes,
+  } = req.body;
 
-  if (!patientName || !patientPhone || !doctorId || !appointmentDate) {
+  if (!patientName || !patientName.trim()) {
+    return res.status(400).json({ error: "Patient full name is required." });
+  }
+
+  if (!patientPhone || !isValidPhone(patientPhone)) {
     return res.status(400).json({
-      error: "Patient name, phone number, doctor, and appointment date are required.",
+      error: "Valid patient phone number is required (10 to 15 digits).",
     });
   }
 
-  if (!isValidPhone(patientPhone)) {
-    return res.status(400).json({
-      error: "Phone number must contain only digits and be 10 to 15 characters long.",
-    });
+  if (!doctorId) {
+    return res.status(400).json({ error: "Please select a doctor." });
   }
 
-  const doctor = db.prepare("SELECT * FROM doctors WHERE id = ? AND active = 1").get(doctorId);
+  if (!appointmentDate || !/^\d{4}-\d{2}-\d{2}$/.test(appointmentDate)) {
+    return res.status(400).json({ error: "A valid appointment date (YYYY-MM-DD) is required." });
+  }
 
+  const validMethods = ["center", "bkash", "nagad"];
+  const selectedMethod = String(paymentMethod).toLowerCase();
+  if (!validMethods.includes(selectedMethod)) {
+    return res.status(400).json({ error: "Invalid payment method selected." });
+  }
+
+  // Verify doctor exists and is active
+  const doctor = db.prepare("SELECT * FROM doctors WHERE id = ? AND active = 1").get(doctorId) as any;
   if (!doctor) {
     return res.status(400).json({ error: "Selected doctor is not available for booking." });
   }
 
+  // Payment method validation
+  let finalSenderPhone: string | null = null;
+  let finalTxId: string | null = null;
+  let initialPaymentStatus = "unpaid";
+
+  if (selectedMethod === "bkash" || selectedMethod === "nagad") {
+    if (!senderPhone || !isValidPhone(senderPhone)) {
+      return res.status(400).json({
+        error: `Please enter a valid sender mobile number for ${selectedMethod.toUpperCase()} payment.`,
+      });
+    }
+    if (!transactionId || transactionId.trim().length < 4) {
+      return res.status(400).json({
+        error: `Please enter the valid ${selectedMethod.toUpperCase()} Transaction ID (TrxID).`,
+      });
+    }
+    finalSenderPhone = senderPhone.trim();
+    finalTxId = transactionId.trim().toUpperCase();
+    initialPaymentStatus = "verification_pending";
+  } else {
+    // Pay at Center: no mobile payment fields required or stored
+    finalSenderPhone = null;
+    finalTxId = null;
+    initialPaymentStatus = "unpaid";
+  }
+
+  const bookingRef = generateBookingReference();
+  const accessToken = uuidv4();
+  const initialApptStatus = "pending";
+
   const insert = db.prepare(`
-    INSERT INTO appointments (patient_name, patient_phone, doctor_id, appointment_date, time_slot)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO appointments (
+      booking_reference,
+      access_token,
+      patient_name,
+      patient_phone,
+      doctor_id,
+      appointment_date,
+      time_slot,
+      payment_method,
+      payment_sender_phone,
+      transaction_id,
+      status,
+      payment_status,
+      notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  const result = insert.run(patientName, patientPhone, doctorId, appointmentDate, timeSlot || null);
+  const logEvent = db.prepare(`
+    INSERT INTO appointment_events (appointment_id, event_type, details)
+    VALUES (?, 'created', ?)
+  `);
 
-  res.json({ success: true, id: result.lastInsertRowid });
+  let newId: number | bigint = 0;
+
+  db.transaction(() => {
+    const result = insert.run(
+      bookingRef,
+      accessToken,
+      patientName.trim(),
+      patientPhone.trim(),
+      doctorId,
+      appointmentDate,
+      timeSlot ? timeSlot.trim() : null,
+      selectedMethod,
+      finalSenderPhone,
+      finalTxId,
+      initialApptStatus,
+      initialPaymentStatus,
+      notes ? notes.trim() : null
+    );
+    newId = result.lastInsertRowid;
+    logEvent.run(
+      newId,
+      `Appointment booked with payment method: ${selectedMethod}, initial payment status: ${initialPaymentStatus}`
+    );
+  })();
+
+  res.json({
+    success: true,
+    id: newId,
+    bookingReference: bookingRef,
+    accessToken,
+    status: initialApptStatus,
+    paymentStatus: initialPaymentStatus,
+    paymentMethod: selectedMethod,
+    receiptUrl: `${BASE_PATH}/receipt/${accessToken}`,
+    message:
+      selectedMethod === "center"
+        ? "আপনার বুকিং অনুরোধ সফলভাবে জমা হয়েছে। সেন্টারে এসে ফি পরিশোধ করবেন এবং অ্যাডমিন অনুমোদনের অপেক্ষা করুন।"
+        : "আপনার বুকিং ও পেমেন্ট তথ্য সফলভাবে জমা হয়েছে। অ্যাডমিন দ্বারা ট্রানজেকশন যাচাই ও অনুমোদনের অপেক্ষা করুন।",
+  });
 });
 
-// API: Admin dashboard list of every appointment, newest first, joined
-// with the doctor's name/specialty so the table doesn't need a second
-// lookup per row.
-router.get("/api/appointments", requireAdminAuth, (req, res) => {
-  const appointments = db
+// API: Patient status tracking lookup by phone number or booking reference
+router.get("/api/appointments/track", trackingLimiter, (req, res) => {
+  const phone = (req.query.phone as string || "").trim();
+  const ref = (req.query.ref as string || "").trim();
+
+  if (!phone && !ref) {
+    return res.status(400).json({ error: "Please enter your mobile number or booking reference." });
+  }
+
+  let query = `
+    SELECT
+      appointments.booking_reference,
+      appointments.access_token,
+      appointments.patient_name,
+      appointments.patient_phone,
+      appointments.appointment_date,
+      appointments.time_slot,
+      appointments.payment_method,
+      appointments.transaction_id,
+      appointments.status,
+      appointments.payment_status,
+      appointments.created_at,
+      doctors.name AS doctor_name,
+      doctors.specialty_category AS doctor_specialty,
+      doctors.fee AS doctor_fee
+    FROM appointments
+    LEFT JOIN doctors ON doctors.id = appointments.doctor_id
+    WHERE 1=1
+  `;
+  const params: any[] = [];
+
+  if (ref) {
+    query += " AND UPPER(appointments.booking_reference) = ?";
+    params.push(ref.toUpperCase());
+  } else if (phone) {
+    const cleanPhone = phone.replace(/\D/g, "");
+    query += " AND REPLACE(REPLACE(REPLACE(appointments.patient_phone, ' ', ''), '-', ''), '+', '') LIKE ?";
+    params.push(`%${cleanPhone}%`);
+  }
+
+  query += " ORDER BY appointments.created_at DESC LIMIT 20";
+
+  const rows = db.prepare(query).all(...params) as any[];
+
+  // Sanitize patient phone for privacy in public search
+  const sanitized = rows.map((r) => {
+    const p = r.patient_phone || "";
+    const maskedPhone = p.length >= 7 ? `${p.slice(0, 3)}****${p.slice(-4)}` : p;
+    return {
+      bookingReference: r.booking_reference,
+      accessToken: r.access_token,
+      patientName: r.patient_name,
+      patientPhoneMasked: maskedPhone,
+      doctorName: r.doctor_name || "Doctor",
+      doctorSpecialty: r.doctor_specialty || "",
+      doctorFee: r.doctor_fee || 0,
+      appointmentDate: r.appointment_date,
+      timeSlot: r.time_slot,
+      paymentMethod: r.payment_method,
+      paymentStatus: r.payment_status,
+      status: r.status,
+      createdAt: r.created_at,
+      receiptUrl: `${BASE_PATH}/receipt/${r.access_token}`,
+    };
+  });
+
+  res.json({ success: true, count: sanitized.length, appointments: sanitized });
+});
+
+// API: Detailed appointment receipt payload by secure access token
+router.get("/api/appointments/receipt/:token", (req, res) => {
+  const { token } = req.params;
+
+  const appt = db
     .prepare(
       `
       SELECT
         appointments.*,
         doctors.name AS doctor_name,
-        doctors.specialty_category AS doctor_specialty
+        doctors.specialty_category AS doctor_specialty,
+        doctors.degree AS doctor_degree,
+        doctors.experience AS doctor_experience,
+        doctors.chamber_time AS doctor_chamber_time,
+        doctors.fee AS doctor_fee
       FROM appointments
       LEFT JOIN doctors ON doctors.id = appointments.doctor_id
-      ORDER BY appointments.created_at DESC
+      WHERE appointments.access_token = ? OR appointments.booking_reference = ?
     `
     )
-    .all();
+    .get(token, token) as any;
 
+  if (!appt) {
+    return res.status(404).json({ error: "Appointment booking record not found." });
+  }
+
+  const settings = getAllSettings();
+
+  res.json({
+    centerName: settings.center_name || "CityCare Diagnostic & Consultation Center",
+    centerHotline: settings.center_hotline || "01789-555666",
+    centerAddress: settings.center_address || "House #12, Road #3, Block #B, Mirpur 10, Dhaka - 1216",
+    bookingReference: appt.booking_reference,
+    accessToken: appt.access_token,
+    patientName: appt.patient_name,
+    patientPhone: appt.patient_phone,
+    doctorName: appt.doctor_name || "—",
+    doctorSpecialty: appt.doctor_specialty || "—",
+    doctorDegree: appt.doctor_degree || "",
+    doctorFee: appt.doctor_fee || 0,
+    appointmentDate: appt.appointment_date,
+    timeSlot: appt.time_slot,
+    paymentMethod: appt.payment_method,
+    paymentSenderPhone: appt.payment_sender_phone,
+    transactionId: appt.transaction_id,
+    status: appt.status,
+    paymentStatus: appt.payment_status,
+    approvedAt: appt.approved_at,
+    paymentVerifiedAt: appt.payment_verified_at,
+    createdAt: appt.created_at,
+    notes: appt.notes,
+  });
+});
+
+// Page: Patient-facing appointment receipt slip
+router.get("/receipt/:token", (_req, res) => {
+  const filePath =
+    process.env.NODE_ENV === "production"
+      ? path.join(process.cwd(), "dist", "receipt.html")
+      : path.join(process.cwd(), "receipt.html");
+
+  res.sendFile(filePath);
+});
+
+// API: Admin list of appointments with comprehensive filtering & search
+router.get("/api/appointments", requireAdminAuth, (req, res) => {
+  const search = (req.query.search as string || "").trim();
+  const status = (req.query.status as string || "all").trim();
+  const paymentStatus = (req.query.paymentStatus as string || "all").trim();
+  const dateRange = (req.query.dateRange as string || "all").trim();
+  const dateField = (req.query.dateField as string || "appointment_date").trim();
+  const startDate = (req.query.startDate as string || "").trim();
+  const endDate = (req.query.endDate as string || "").trim();
+
+  let sql = `
+    SELECT
+      appointments.*,
+      doctors.name AS doctor_name,
+      doctors.specialty_category AS doctor_specialty,
+      doctors.fee AS doctor_fee
+    FROM appointments
+    LEFT JOIN doctors ON doctors.id = appointments.doctor_id
+    WHERE 1=1
+  `;
+  const params: any[] = [];
+
+  if (search) {
+    const q = `%${search}%`;
+    const cleanDigits = `%${search.replace(/\D/g, "")}%`;
+    sql += ` AND (
+      appointments.patient_name LIKE ?
+      OR appointments.booking_reference LIKE ?
+      OR appointments.transaction_id LIKE ?
+      OR appointments.patient_phone LIKE ?
+      OR REPLACE(REPLACE(appointments.patient_phone, ' ', ''), '-', '') LIKE ?
+    )`;
+    params.push(q, q, q, q, cleanDigits);
+  }
+
+  if (status && status !== "all") {
+    sql += " AND appointments.status = ?";
+    params.push(status);
+  }
+
+  if (paymentStatus && paymentStatus !== "all") {
+    sql += " AND appointments.payment_status = ?";
+    params.push(paymentStatus);
+  }
+
+  const dateCol = dateField === "created_at" ? "date(appointments.created_at)" : "date(appointments.appointment_date)";
+
+  if (dateRange === "today") {
+    sql += ` AND ${dateCol} = date('now')`;
+  } else if (dateRange === "yesterday") {
+    sql += ` AND ${dateCol} = date('now', '-1 day')`;
+  } else if (dateRange === "this_week") {
+    sql += ` AND ${dateCol} >= date('now', '-7 days')`;
+  } else if (dateRange === "this_month") {
+    sql += ` AND ${dateCol} >= date('now', 'start of month')`;
+  } else if (dateRange === "custom") {
+    if (startDate && endDate) {
+      sql += ` AND ${dateCol} BETWEEN ? AND ?`;
+      params.push(startDate, endDate);
+    } else if (startDate) {
+      sql += ` AND ${dateCol} >= ?`;
+      params.push(startDate);
+    } else if (endDate) {
+      sql += ` AND ${dateCol} <= ?`;
+      params.push(endDate);
+    }
+  }
+
+  sql += " ORDER BY appointments.created_at DESC";
+
+  const appointments = db.prepare(sql).all(...params);
   res.json(appointments);
 });
 
-// API: Admin updates an appointment's status (pending / confirmed / cancelled).
+// API: Summary analytics statistics for admin dashboard overview
+router.get("/api/appointments/stats", requireAdminAuth, (_req, res) => {
+  const total = (db.prepare("SELECT COUNT(*) AS c FROM appointments").get() as any).c;
+  const pending = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE status = 'pending'").get() as any).c;
+  const confirmed = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE status = 'confirmed'").get() as any).c;
+  const cancelled = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE status = 'cancelled'").get() as any).c;
+  const verificationPending = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE payment_status = 'verification_pending'").get() as any).c;
+  const verified = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE payment_status = 'verified'").get() as any).c;
+  const unpaid = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE payment_status = 'unpaid'").get() as any).c;
+  const bookedToday = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE date(created_at) = date('now')").get() as any).c;
+  const scheduledToday = (db.prepare("SELECT COUNT(*) AS c FROM appointments WHERE date(appointment_date) = date('now')").get() as any).c;
+
+  res.json({
+    total,
+    pending,
+    confirmed,
+    cancelled,
+    verificationPending,
+    verified,
+    unpaid,
+    bookedToday,
+    scheduledToday,
+  });
+});
+
+// API: Admin explicit appointment approval workflow (pending / confirmed / cancelled)
+router.put("/api/appointments/:id/approval", requireAdminAuth, (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const allowedStatuses = ["pending", "confirmed", "cancelled"];
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({ error: "Status must be one of: pending, confirmed, cancelled." });
+  }
+
+  const existing = db.prepare("SELECT * FROM appointments WHERE id = ?").get(id) as any;
+  if (!existing) {
+    return res.status(404).json({ error: "Appointment not found." });
+  }
+
+  const adminUser = (req.session as any)?.adminUsername || "admin";
+
+  db.transaction(() => {
+    db.prepare(`
+      UPDATE appointments
+      SET status = ?, approved_by = ?, approved_at = datetime('now')
+      WHERE id = ?
+    `).run(status, adminUser, id);
+
+    db.prepare(`
+      INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
+      VALUES (?, 'approval_change', ?, ?)
+    `).run(id, adminUser, `Appointment status changed to ${status}`);
+  })();
+
+  res.json({ success: true, status, approvedBy: adminUser });
+});
+
+// API: Admin explicit payment verification workflow (unpaid / verification_pending / verified / rejected)
+router.put("/api/appointments/:id/payment", requireAdminAuth, (req, res) => {
+  const { id } = req.params;
+  const { paymentStatus } = req.body;
+
+  const allowedPaymentStatuses = ["unpaid", "verification_pending", "verified", "rejected"];
+  if (!allowedPaymentStatuses.includes(paymentStatus)) {
+    return res.status(400).json({
+      error: "Payment status must be one of: unpaid, verification_pending, verified, rejected.",
+    });
+  }
+
+  const existing = db.prepare("SELECT * FROM appointments WHERE id = ?").get(id) as any;
+  if (!existing) {
+    return res.status(404).json({ error: "Appointment not found." });
+  }
+
+  const adminUser = (req.session as any)?.adminUsername || "admin";
+
+  db.transaction(() => {
+    db.prepare(`
+      UPDATE appointments
+      SET payment_status = ?, payment_verified_by = ?, payment_verified_at = datetime('now')
+      WHERE id = ?
+    `).run(paymentStatus, adminUser, id);
+
+    db.prepare(`
+      INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
+      VALUES (?, 'payment_change', ?, ?)
+    `).run(id, adminUser, `Payment status changed to ${paymentStatus}`);
+  })();
+
+  res.json({ success: true, paymentStatus, verifiedBy: adminUser });
+});
+
+// API: Backward-compatible status updater
 router.put("/api/appointments/:id", requireAdminAuth, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -556,7 +1008,13 @@ router.put("/api/appointments/:id", requireAdminAuth, (req, res) => {
     return res.status(400).json({ error: "Status must be one of: pending, confirmed, cancelled." });
   }
 
-  const result = db.prepare("UPDATE appointments SET status = ? WHERE id = ?").run(status, id);
+  const adminUser = (req.session as any)?.adminUsername || "admin";
+
+  const result = db
+    .prepare(
+      "UPDATE appointments SET status = ?, approved_by = ?, approved_at = datetime('now') WHERE id = ?"
+    )
+    .run(status, adminUser, id);
 
   if (result.changes === 0) {
     return res.status(404).json({ error: "Appointment not found." });
@@ -568,13 +1026,128 @@ router.put("/api/appointments/:id", requireAdminAuth, (req, res) => {
 // API: Admin deletes an appointment record.
 router.delete("/api/appointments/:id", requireAdminAuth, (req, res) => {
   const { id } = req.params;
-  const result = db.prepare("DELETE FROM appointments WHERE id = ?").run(id);
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: "Appointment not found." });
-  }
+  db.transaction(() => {
+    db.prepare("DELETE FROM appointment_events WHERE appointment_id = ?").run(id);
+    const result = db.prepare("DELETE FROM appointments WHERE id = ?").run(id);
+    if (result.changes === 0) {
+      throw new Error("Appointment not found.");
+    }
+  })();
 
   res.json({ success: true });
+});
+
+// API: Export filtered appointment list to CSV
+router.get("/api/appointments/export-csv", requireAdminAuth, (req, res) => {
+  const search = (req.query.search as string || "").trim();
+  const status = (req.query.status as string || "all").trim();
+  const paymentStatus = (req.query.paymentStatus as string || "all").trim();
+
+  let sql = `
+    SELECT
+      appointments.*,
+      doctors.name AS doctor_name,
+      doctors.specialty_category AS doctor_specialty,
+      doctors.fee AS doctor_fee
+    FROM appointments
+    LEFT JOIN doctors ON doctors.id = appointments.doctor_id
+    WHERE 1=1
+  `;
+  const params: any[] = [];
+
+  if (search) {
+    const q = `%${search}%`;
+    sql += ` AND (appointments.patient_name LIKE ? OR appointments.booking_reference LIKE ? OR appointments.patient_phone LIKE ?)`;
+    params.push(q, q, q);
+  }
+
+  if (status && status !== "all") {
+    sql += " AND appointments.status = ?";
+    params.push(status);
+  }
+
+  if (paymentStatus && paymentStatus !== "all") {
+    sql += " AND appointments.payment_status = ?";
+    params.push(paymentStatus);
+  }
+
+  sql += " ORDER BY appointments.created_at DESC";
+
+  const rows = db.prepare(sql).all(...params) as any[];
+
+  function escapeCsv(val: any): string {
+    if (val === null || val === undefined) return '""';
+    const str = String(val).replace(/"/g, '""');
+    return `"${str}"`;
+  }
+
+  const headers = [
+    "Booking Reference",
+    "Patient Name",
+    "Phone",
+    "Doctor",
+    "Specialty",
+    "Doctor Fee",
+    "Appointment Date",
+    "Time Slot",
+    "Payment Method",
+    "Sender Phone",
+    "Transaction ID",
+    "Payment Status",
+    "Appointment Status",
+    "Booked Date",
+    "Approved By",
+  ];
+
+  const csvRows = [headers.join(",")];
+
+  for (const r of rows) {
+    csvRows.push([
+      escapeCsv(r.booking_reference),
+      escapeCsv(r.patient_name),
+      escapeCsv(r.patient_phone),
+      escapeCsv(r.doctor_name),
+      escapeCsv(r.doctor_specialty),
+      escapeCsv(r.doctor_fee),
+      escapeCsv(r.appointment_date),
+      escapeCsv(r.time_slot || "—"),
+      escapeCsv(r.payment_method),
+      escapeCsv(r.payment_sender_phone || "—"),
+      escapeCsv(r.transaction_id || "—"),
+      escapeCsv(r.payment_status),
+      escapeCsv(r.status),
+      escapeCsv(r.created_at),
+      escapeCsv(r.approved_by || "—"),
+    ].join(","));
+  }
+
+  const csvContent = "\uFEFF" + csvRows.join("\r\n"); // UTF-8 BOM for Excel compatibility
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", `attachment; filename="citycare-appointments-${new Date().toISOString().slice(0, 10)}.csv"`);
+  res.send(csvContent);
+});
+
+// API: Admin gets all settings
+router.get("/api/admin/settings", requireAdminAuth, (_req, res) => {
+  res.json(getAllSettings());
+});
+
+// API: Admin updates settings
+router.put("/api/admin/settings", requireAdminAuth, (req, res) => {
+  const updates = req.body;
+  if (!updates || typeof updates !== "object") {
+    return res.status(400).json({ error: "Invalid settings payload." });
+  }
+
+  for (const [key, value] of Object.entries(updates)) {
+    if (typeof key === "string" && typeof value === "string") {
+      updateSetting(key, value);
+    }
+  }
+
+  res.json({ success: true, settings: getAllSettings() });
 });
 
 // Mount every route defined above under BASE_PATH. Thanks to the
@@ -606,9 +1179,15 @@ async function initializeServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Diagnostic Center web app server running on port ${PORT}`);
-  });
+  if (typeof rawPort === "string" && isNaN(Number(rawPort))) {
+    app.listen(rawPort, () => {
+      console.log(`Diagnostic Center web app server listening on socket ${rawPort}`);
+    });
+  } else {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Diagnostic Center web app server running on port ${PORT}`);
+    });
+  }
 }
 
 initializeServer();

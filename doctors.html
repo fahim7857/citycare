@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>বিশেষজ্ঞ ডাক্তারগণ — CityCare Diagnostic & Consultation Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Hanken Grotesk', 'Inter', 'sans-serif'],
+              display: ['Manrope', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
+      .font-display { font-family: 'Manrope', sans-serif; }
+      @keyframes whatsapp-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+        70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+      }
+      .whatsapp-btn-pulse { animation: whatsapp-pulse 2.5s infinite; }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- GLOBAL HEADER / NAVIGATION -->
+    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          
+          <!-- Logo -->
+          <a href="/citycare/" class="flex items-center space-x-3">
+            <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
+              <i data-lucide="activity" class="h-6 w-6"></i>
+            </div>
+            <div>
+              <span class="text-xl font-extrabold text-slate-900 tracking-tight font-display block">CityCare</span>
+              <span class="text-xs text-sky-600 font-bold tracking-wider uppercase block -mt-1">Diagnostic Center</span>
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex space-x-8 h-full">
+            <a href="/citycare/" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              হোম / Home
+            </a>
+            <a href="/citycare/doctors.html" class="text-sky-600 border-b-2 border-sky-600 font-bold px-1 inline-flex items-center text-sm h-full transition-colors">
+              ডাক্তারগণ / Doctors
+            </a>
+            <a href="/citycare/appointment.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              অ্যাপয়েন্টমেন্ট / Appointment
+            </a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              বুকিং ইতিহাস / Status
+            </a>
+            <a href="/citycare/reports.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              রিপোর্ট / Online Report
+            </a>
+            <a href="/citycare/contact.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              যোগাযোগ / Contact
+            </a>
+          </nav>
+
+          <!-- Header Action Block -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="tel:01789555666" class="flex items-center space-x-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors">
+              <i data-lucide="phone-call" class="h-4 w-4 text-sky-600"></i>
+              <span>01789-555666</span>
+            </a>
+            <a href="/citycare/admin-login.html" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-slate-900/10 transition-all">
+              Staff Login
+            </a>
+            <a href="/citycare/appointment.html" class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-sky-600/15 transition-all">
+              বুকিং করুন
+            </a>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden flex items-center">
+            <button id="menu-btn" class="text-slate-700 hover:text-sky-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+              <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm">
+      <div class="bg-white w-4/5 max-w-sm h-full p-6 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <div class="bg-sky-600 text-white p-2 rounded-lg">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-900 font-display">CityCare</span>
+            </div>
+            <button id="close-menu-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+              <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+          <nav class="flex flex-col space-y-3 py-6">
+            <a href="/citycare/" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">হোম / Home</a>
+            <a href="/citycare/doctors.html" class="text-sky-600 bg-sky-50 font-bold text-base py-2 px-3 rounded-lg block transition-colors">ডাক্তারগণ / Doctors</a>
+            <a href="/citycare/appointment.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অ্যাপয়েন্টমেন্ট / Appointment</a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">বুকিং ইতিহাস / Status</a>
+            <a href="/citycare/reports.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অনলাইন রিপোর্ট / Online Report</a>
+            <a href="/citycare/contact.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">যোগাযোগ / Contact</a>
+            <a href="/citycare/admin-login.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 flex items-center gap-2 transition-colors border-t border-slate-100 mt-2 pt-4">
+              <i data-lucide="lock" class="h-4 w-4 text-sky-600"></i>
+              <span>Staff Login</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="border-t border-slate-100 pt-4">
+          <a href="/citycare/appointment.html" class="block text-center w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-sky-600/10 transition-all">
+            অ্যাপয়েন্টমেন্ট বুকিং করুন
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <main class="flex-grow py-12 md:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header Hero -->
+        <div class="text-center max-w-3xl mx-auto space-y-3 mb-12">
+          <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-100/80 px-3 py-1 rounded-full inline-block">
+            Medical Consultant Directory
+          </span>
+          <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-display">
+            আমাদের আউটডোর বিশেষজ্ঞ ডাক্তারগণ
+          </h1>
+          <div class="h-1.5 w-16 bg-sky-600 mx-auto rounded-full"></div>
+          <p class="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
+            মিরপুর সিটি কেয়ার ডায়াগনস্টিক সেন্টারে নিয়মিত পরামর্শ প্রদানকারী অভিজ্ঞ প্রফেসর ও কনসালট্যান্টদের তালিকা। নিচে বিভাগ অনুযায়ী ফিল্টার করে ডাক্তার নির্বাচন করুন।
+          </p>
+        </div>
+
+        <!-- DEPARTMENT FILTER TABS -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-10" id="department-filters">
+          <button data-cat="all" class="cat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-sky-600 text-white shadow-md shadow-sky-600/15">
+            সকল বিভাগ / All
+          </button>
+          <!-- Dynamic category buttons injected here -->
+        </div>
+
+        <!-- SEARCH INPUT -->
+        <div class="max-w-md mx-auto mb-10">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-4 top-3.5 h-4 w-4 text-slate-400"></i>
+            <input type="text" id="doctor-search" placeholder="ডাক্তারের নাম বা বিভাগ দিয়ে খুঁজুন..."
+              class="w-full bg-white rounded-2xl border border-slate-200 pl-11 pr-4 py-3 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10 outline-none shadow-sm transition-all" />
+          </div>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div id="doctors-loading" class="text-center py-20">
+          <div class="inline-block animate-spin text-sky-600 mb-3">
+            <i data-lucide="loader-2" class="h-8 w-8"></i>
+          </div>
+          <p class="text-sm text-slate-500">ডাক্তারদের তথ্য লোড হচ্ছে... / Loading doctors...</p>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="doctors-empty" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 max-w-md mx-auto p-8 space-y-3">
+          <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto">
+            <i data-lucide="user-x" class="h-6 w-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-800">কোনো ডাক্তার পাওয়া যায়নি</h3>
+          <p class="text-xs text-slate-500">এই বিভাগে বর্তমানে কোনো সক্রিয় ডাক্তার নেই অথবা অনুসন্ধানের সাথে কোনো মিল পাওয়া যায়নি।</p>
+        </div>
+
+        <!-- DOCTORS GRID CONTAINER -->
+        <div id="doctors-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Injected dynamically from backend API -->
+        </div>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 space-y-4 sm:space-y-0">
+          <p>© 2026 CityCare Diagnostic Center Ltd. · মিরপুর ১০, ঢাকা · হটলাইন: 01789-555666</p>
+          <div class="flex space-x-6">
+            <a href="/citycare/" class="hover:text-white">হোম</a>
+            <a href="/citycare/appointment.html" class="hover:text-white">অ্যাপয়েন্টমেন্ট</a>
+            <a href="/citycare/appointment-history.html" class="hover:text-white">বুকিং স্ট্যাটাস</a>
+            <a href="/citycare/reports.html" class="hover:text-white">অনলাইন রিপোর্ট</a>
+            <a href="/citycare/contact.html" class="hover:text-white">যোগাযোগ</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- DYNAMIC FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/8801789555666?text=আসসালামু আলাইকুম সিটি কেয়ার, আমি ডাক্তারের চেম্বার সিরিয়াল নিয়ে জানতে চাই।" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl whatsapp-btn-pulse flex items-center justify-center transition-all duration-300 hover:scale-110" aria-label="Chat on WhatsApp">
+      <i data-lucide="message-circle" class="h-6 w-6"></i>
+    </a>
+
+    <!-- PAGE SCRIPT -->
+    <script>
+      const BASE_PATH = "/citycare";
+      let allDoctors = [];
+      let activeCategory = "all";
+
+      // Mobile Menu Toggle
+      const mobileMenu = document.getElementById("mobile-menu");
+      document.getElementById("menu-btn")?.addEventListener("click", () => mobileMenu.classList.remove("hidden"));
+      document.getElementById("close-menu-btn")?.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+
+      async function loadDoctors() {
+        const loadingEl = document.getElementById("doctors-loading");
+        const gridEl = document.getElementById("doctors-grid");
+        const emptyEl = document.getElementById("doctors-empty");
+
+        try {
+          const res = await fetch(`${BASE_PATH}/api/doctors`);
+          if (!res.ok) throw new Error("Failed to load doctors");
+          allDoctors = await res.json();
+
+          loadingEl.classList.add("hidden");
+          renderFilters();
+          applyFilterAndRender();
+        } catch (err) {
+          loadingEl.innerHTML = `
+            <p class="text-sm text-rose-600 font-semibold">ডাক্তার তালিকা লোড করা যায়নি। অনুগ্রহ করে পেজ রিফ্রেশ করুন।</p>
+          `;
+        }
+      }
+
+      function renderFilters() {
+        const filterContainer = document.getElementById("department-filters");
+        const categories = [...new Set(allDoctors.map(d => d.specialty_category).filter(Boolean))];
+
+        categories.forEach(cat => {
+          const btn = document.createElement("button");
+          btn.setAttribute("data-cat", cat);
+          btn.className = "cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-white text-slate-600 border border-slate-200 hover:border-sky-300 hover:text-sky-600";
+          btn.textContent = cat;
+          btn.addEventListener("click", () => {
+            activeCategory = cat;
+            updateFilterButtonStyles();
+            applyFilterAndRender();
+          });
+          filterContainer.appendChild(btn);
+        });
+
+        // Set listener for the 'all' button
+        const allBtn = filterContainer.querySelector('[data-cat="all"]');
+        allBtn?.addEventListener("click", () => {
+          activeCategory = "all";
+          updateFilterButtonStyles();
+          applyFilterAndRender();
+        });
+      }
+
+      function updateFilterButtonStyles() {
+        document.querySelectorAll(".cat-filter-btn").forEach(btn => {
+          const cat = btn.getAttribute("data-cat");
+          if (cat === activeCategory) {
+            btn.className = "cat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-sky-600 text-white shadow-md shadow-sky-600/15";
+          } else {
+            btn.className = "cat-filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-white text-slate-600 border border-slate-200 hover:border-sky-300 hover:text-sky-600";
+          }
+        });
+      }
+
+      function applyFilterAndRender() {
+        const gridEl = document.getElementById("doctors-grid");
+        const emptyEl = document.getElementById("doctors-empty");
+        const searchTerm = document.getElementById("doctor-search")?.value.trim().toLowerCase() || "";
+
+        let filtered = allDoctors;
+        if (activeCategory !== "all") {
+          filtered = filtered.filter(d => d.specialty_category === activeCategory);
+        }
+        if (searchTerm) {
+          filtered = filtered.filter(d =>
+            (d.name || "").toLowerCase().includes(searchTerm) ||
+            (d.specialty_category || "").toLowerCase().includes(searchTerm) ||
+            (d.degree || "").toLowerCase().includes(searchTerm)
+          );
+        }
+
+        if (filtered.length === 0) {
+          gridEl.classList.add("hidden");
+          emptyEl.classList.remove("hidden");
+          return;
+        }
+
+        emptyEl.classList.add("hidden");
+        gridEl.classList.remove("hidden");
+
+        gridEl.innerHTML = filtered.map(d => {
+          const bookUrl = `${BASE_PATH}/appointment.html?doctorId=${d.id}&category=${encodeURIComponent(d.specialty_category)}`;
+          return `
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between overflow-hidden">
+              <div class="p-6 space-y-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center shrink-0">
+                    <i data-lucide="user-round" class="h-6 w-6"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-extrabold text-slate-900 text-base leading-tight">${escapeHtml(d.name)}</h3>
+                    <span class="inline-block text-[11px] font-bold text-sky-600 tracking-wide uppercase mt-0.5">${escapeHtml(d.specialty_category)}</span>
+                  </div>
+                </div>
+
+                <div class="space-y-2 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                  ${d.degree ? `
+                    <div class="flex justify-between">
+                      <span class="font-semibold text-slate-700">ডিগ্রী:</span>
+                      <span class="text-right text-slate-600 font-medium">${escapeHtml(d.degree)}</span>
+                    </div>` : ''}
+                  ${d.experience ? `
+                    <div class="flex justify-between">
+                      <span class="font-semibold text-slate-700">অভিজ্ঞতা:</span>
+                      <span class="text-right text-slate-600 font-medium">${escapeHtml(d.experience)}</span>
+                    </div>` : ''}
+                  ${d.chamber_time ? `
+                    <div class="flex justify-between">
+                      <span class="font-semibold text-slate-700">চেম্বার সময়:</span>
+                      <span class="text-right text-slate-600 font-medium">${escapeHtml(d.chamber_time)}</span>
+                    </div>` : ''}
+                  <div class="flex justify-between items-center pt-1 border-t border-slate-50">
+                    <span class="font-semibold text-slate-700">কনসালটেশন ফি:</span>
+                    <span class="text-sky-600 font-extrabold text-sm">৳ ${escapeHtml(d.fee || 0)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-4 bg-slate-50 border-t border-slate-100">
+                <a href="${bookUrl}" class="block text-center w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md shadow-sky-600/15 transition-all active:scale-[0.98]">
+                  অ্যাপয়েন্টমেন্ট নিন
+                </a>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      document.getElementById("doctor-search")?.addEventListener("input", applyFilterAndRender);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.createIcons();
+        loadDoctors();
+      });
+    </script>
+  </body>
+</html>

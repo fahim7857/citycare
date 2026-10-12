@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>যোগাযোগ ও ঠিকানা — CityCare Diagnostic Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Hanken Grotesk', 'Inter', 'sans-serif'],
+              display: ['Manrope', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
+      .font-display { font-family: 'Manrope', sans-serif; }
+      @keyframes whatsapp-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+        70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+      }
+      .whatsapp-btn-pulse { animation: whatsapp-pulse 2.5s infinite; }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- GLOBAL HEADER -->
+    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+          
+          <!-- Logo -->
+          <a href="/citycare/" class="flex items-center space-x-3">
+            <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
+              <i data-lucide="activity" class="h-6 w-6"></i>
+            </div>
+            <div>
+              <span class="text-xl font-extrabold text-slate-900 tracking-tight font-display block">CityCare</span>
+              <span class="text-xs text-sky-600 font-bold tracking-wider uppercase block -mt-1">Diagnostic Center</span>
+            </div>
+          </a>
+
+          <!-- Navigation -->
+          <nav class="hidden md:flex space-x-8 h-full">
+            <a href="/citycare/" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              হোম / Home
+            </a>
+            <a href="/citycare/doctors.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              ডাক্তারগণ / Doctors
+            </a>
+            <a href="/citycare/appointment.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              অ্যাপয়েন্টমেন্ট / Appointment
+            </a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              বুকিং ইতিহাস / Status
+            </a>
+            <a href="/citycare/reports.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+              রিপোর্ট / Online Report
+            </a>
+            <a href="/citycare/contact.html" class="text-sky-600 border-b-2 border-sky-600 font-bold px-1 inline-flex items-center text-sm h-full transition-colors">
+              যোগাযোগ / Contact
+            </a>
+          </nav>
+
+          <!-- Top Actions -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <a href="tel:01789555666" class="flex items-center space-x-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors">
+              <i data-lucide="phone-call" class="h-4 w-4 text-sky-600"></i>
+              <span>01789-555666</span>
+            </a>
+            <a href="/citycare/admin-login.html" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-slate-900/10 transition-all">
+              Staff Login
+            </a>
+          </div>
+
+          <!-- Mobile Toggle -->
+          <div class="md:hidden flex items-center">
+            <button id="menu-btn" class="text-slate-700 hover:text-sky-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+              <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm">
+      <div class="bg-white w-4/5 max-w-sm h-full p-6 shadow-2xl flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+            <div class="flex items-center space-x-2">
+              <div class="bg-sky-600 text-white p-2 rounded-lg">
+                <i data-lucide="activity" class="h-5 w-5"></i>
+              </div>
+              <span class="text-lg font-bold text-slate-900 font-display">CityCare</span>
+            </div>
+            <button id="close-menu-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+              <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+          </div>
+
+          <nav class="flex flex-col space-y-3 py-6">
+            <a href="/citycare/" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">হোম / Home</a>
+            <a href="/citycare/doctors.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">ডাক্তারগণ / Doctors</a>
+            <a href="/citycare/appointment.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অ্যাপয়েন্টমেন্ট / Appointment</a>
+            <a href="/citycare/appointment-history.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">বুকিং ইতিহাস / Status</a>
+            <a href="/citycare/reports.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অনলাইন রিপোর্ট / Online Report</a>
+            <a href="/citycare/contact.html" class="text-sky-600 bg-sky-50 font-bold text-base py-2 px-3 rounded-lg block transition-colors">যোগাযোগ / Contact</a>
+            <a href="/citycare/admin-login.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 flex items-center gap-2 transition-colors border-t border-slate-100 mt-2 pt-4">
+              <i data-lucide="lock" class="h-4 w-4 text-sky-600"></i>
+              <span>Staff Login</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <main class="flex-grow py-12 md:py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center max-w-3xl mx-auto space-y-3 mb-14">
+          <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-100/80 px-3 py-1 rounded-full inline-block">
+            Get In Touch
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display">
+            যোগাযোগ ও অবস্থান
+          </h1>
+          <div class="h-1.5 w-16 bg-sky-600 mx-auto rounded-full"></div>
+          <p class="text-sm text-slate-500 max-w-lg mx-auto">
+            যেকোনো পরীক্ষা, ডাক্তার শিডিউল বা জরুরি তথ্যের জন্য সরাসরি সেন্টারে আসুন অথবা আমাদের হটলাইনে কল করুন।
+          </p>
+        </div>
+
+        <!-- 4 CONTACT INFO CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          
+          <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all space-y-3">
+            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="map-pin" class="h-6 w-6"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">আমাদের ঠিকানা</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              বাড়ি # ১২, রোড # ৩, ব্লক # বি, মিরপুর-১০ (গোলচত্বরের নিকটে), ঢাকা - ১২১৬
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all space-y-3">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="phone-call" class="h-6 w-6"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">হটলাইন ও সিরিয়াল</h3>
+            <p class="text-xs text-slate-500 leading-relaxed font-mono">
+              01789-555666<br />01888-112233
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all space-y-3">
+            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="clock" class="h-6 w-6"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">সেবার সময়সূচী</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              প্রতিদিন (শনি - শুক্র)<br />সকাল ৭:০০ AM - রাত ১১:৩০ PM
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all space-y-3">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="mail" class="h-6 w-6"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">ইমেইল সাপোর্ট</h3>
+            <p class="text-xs text-slate-500 leading-relaxed font-mono">
+              info@citycarediagnostic.com<br />support@citycarediagnostic.com
+            </p>
+          </div>
+
+        </div>
+
+        <!-- FORM & MAP ROW -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- INQUIRY FORM -->
+          <div class="lg:col-span-7 bg-white p-8 sm:p-10 rounded-3xl border border-slate-200/80 shadow-xl space-y-6">
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-900 font-display">আমাদের বার্তা পাঠান / Send a Message</h2>
+              <p class="text-xs text-slate-500 mt-1">আপনার যেকোনো প্রশ্ন, পরামর্শ বা ফিডব্যাক লিখে পাঠান।</p>
+            </div>
+
+            <div id="contact-success" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-2xl text-xs flex items-center gap-2">
+              <i data-lucide="check-circle" class="h-4 w-4 text-emerald-600 shrink-0"></i>
+              <span>আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে! আমাদের টিম শীঘ্রই যোগাযোগ করবে।</span>
+            </div>
+
+            <form id="contact-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase mb-1">আপনার নাম *</label>
+                  <input type="text" required placeholder="নাম লিখুন"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 uppercase mb-1">মোবাইল নম্বর *</label>
+                  <input type="tel" required placeholder="01XXXXXXXXX"
+                    class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none font-mono" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">বিষয় / Subject</label>
+                <input type="text" placeholder="যেমন: টেস্টের খরচ বা ডাক্তারের সিরিয়াল"
+                  class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">বার্তা / Message *</label>
+                <textarea rows="4" required placeholder="আপনার বার্তা বিস্তারিত লিখুন..."
+                  class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-500 outline-none"></textarea>
+              </div>
+
+              <button type="submit"
+                class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-sky-600/20 active:scale-[0.98] transition-all text-sm">
+                বার্তা পাঠান
+              </button>
+            </form>
+          </div>
+
+          <!-- MAP / LOCATION CARD -->
+          <div class="lg:col-span-5 bg-white p-8 rounded-3xl border border-slate-200/80 shadow-xl space-y-6">
+            <h2 class="text-xl font-extrabold text-slate-900 font-display">কীভাবে আসবেন / Directions</h2>
+            
+            <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+              <div class="flex items-start gap-3">
+                <div class="bg-sky-100 text-sky-600 p-2 rounded-xl shrink-0 mt-0.5">
+                  <i data-lucide="navigation" class="h-4 w-4"></i>
+                </div>
+                <div>
+                  <strong class="text-slate-800 block mb-0.5">মেট্রোরেল স্টেশন:</strong>
+                  মিরপুর-১০ মেট্রোরেল স্টেশন থেকে মাত্র ২ মিনিট হাঁটার দূরত্ব।
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="bg-sky-100 text-sky-600 p-2 rounded-xl shrink-0 mt-0.5">
+                  <i data-lucide="bus" class="h-4 w-4"></i>
+                </div>
+                <div>
+                  <strong class="text-slate-800 block mb-0.5">বাস স্ট্যান্ড:</strong>
+                  মিরপুর ১০ গোলচত্বর মোড়ে নেমে ব্লকে বি-র দিকে ৩ নম্বর রোডে প্রবেশ করুন।
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="bg-sky-100 text-sky-600 p-2 rounded-xl shrink-0 mt-0.5">
+                  <i data-lucide="ambulance" class="h-4 w-4"></i>
+                </div>
+                <div>
+                  <strong class="text-slate-800 block mb-0.5">জরুরি এম্বুলেন্স সুবিধা:</strong>
+                  রোগী স্থানান্তরের জন্য আমাদের নিজস্ব ২৪/৭ এম্বুলেন্স সার্ভিস কল করুন 01789-555666 নম্বরে।
+                </div>
+              </div>
+            </div>
+
+            <!-- Stylized Map Frame -->
+            <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video relative flex items-center justify-center text-center p-4">
+              <div class="space-y-2">
+                <div class="w-10 h-10 bg-sky-600 text-white rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
+                  <i data-lucide="map-pin" class="h-5 w-5"></i>
+                </div>
+                <p class="font-bold text-slate-800 text-xs">CityCare Diagnostic Center</p>
+                <p class="text-[10px] text-slate-500">Mirpur 10 Roundabout, Dhaka</p>
+                <a href="https://maps.google.com" target="_blank"
+                  class="inline-block mt-1 text-[11px] font-bold text-sky-600 hover:text-sky-700 underline">
+                  Open in Google Maps
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 space-y-4 sm:space-y-0">
+          <p>© 2026 CityCare Diagnostic Center Ltd. · মিরপুর ১০, ঢাকা · হটলাইন: 01789-555666</p>
+          <div class="flex space-x-6">
+            <a href="/citycare/" class="hover:text-white">হোম</a>
+            <a href="/citycare/doctors.html" class="hover:text-white">ডাক্তারগণ</a>
+            <a href="/citycare/appointment.html" class="hover:text-white">অ্যাপয়েন্টমেন্ট</a>
+            <a href="/citycare/appointment-history.html" class="hover:text-white">বুকিং স্ট্যাটাস</a>
+            <a href="/citycare/reports.html" class="hover:text-white">অনলাইন রিপোর্ট</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/8801789555666?text=আসসালামু আলাইকুম সিটি কেয়ার, আমি তথ্য জানতে চাই।" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl whatsapp-btn-pulse flex items-center justify-center transition-all duration-300 hover:scale-110" aria-label="Chat on WhatsApp">
+      <i data-lucide="message-circle" class="h-6 w-6"></i>
+    </a>
+
+    <!-- SCRIPT -->
+    <script>
+      // Mobile Menu
+      const mobileMenu = document.getElementById("mobile-menu");
+      document.getElementById("menu-btn")?.addEventListener("click", () => mobileMenu.classList.remove("hidden"));
+      document.getElementById("close-menu-btn")?.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+
+      const contactForm = document.getElementById("contact-form");
+      const contactSuccess = document.getElementById("contact-success");
+
+      contactForm?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        contactForm.reset();
+        contactSuccess.classList.remove("hidden");
+        setTimeout(() => contactSuccess.classList.add("hidden"), 6000);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") lucide.createIcons();
+      });
+    </script>
+  </body>
+</html>
