@@ -1,536 +1,610 @@
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CityCare Diagnostic & Consultation Center — ঢাকা</title>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Hanken Grotesk', 'Inter', 'sans-serif'],
-              display: ['Manrope', 'sans-serif'],
-            },
-          }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CityCare Diagnostic & Consultation Center — ঢাকা</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Hanken Grotesk', 'Inter', 'sans-serif'],
+            display: ['Manrope', 'sans-serif'],
+          },
         }
       }
-    </script>
-    
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <style>
-      :root {
-        --primary-color: #0284c7;
-        --primary-dark: #0369a1;
-        --secondary-color: #0f172a;
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --primary-color: #0284c7;
+      --primary-dark: #0369a1;
+      --secondary-color: #0f172a;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    @keyframes whatsapp-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
       }
 
-      html {
-        scroll-behavior: smooth;
-        font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+      70% {
+        box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
       }
 
-      .hero-gradient {
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
       }
+    }
 
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
-      }
+    .whatsapp-btn-pulse {
+      animation: whatsapp-pulse 2.5s infinite;
+    }
+  </style>
+</head>
 
-      @keyframes whatsapp-pulse {
-        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-        70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-      }
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-      .whatsapp-btn-pulse {
-        animation: whatsapp-pulse 2.5s infinite;
-      }
-    </style>
-  </head>
-  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+  <!-- GLOBAL HEADER / NAVIGATION -->
+  <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
 
-    <!-- GLOBAL HEADER / NAVIGATION -->
-    <header class="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
-          
-          <!-- Logo Section -->
-          <a href="/citycare/" class="flex items-center space-x-3 cursor-pointer">
-            <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
-              <i data-lucide="activity" class="h-6 w-6"></i>
-            </div>
-            <div>
-              <span class="text-xl font-extrabold text-slate-900 tracking-tight font-display block">CityCare</span>
-              <span class="text-xs text-sky-600 font-bold tracking-wider uppercase block -mt-1">Diagnostic Center</span>
-            </div>
+        <!-- Logo Section -->
+        <a href="/citycare/" class="flex items-center space-x-3 cursor-pointer">
+          <div class="bg-sky-600 text-white p-2.5 rounded-xl shadow-md shadow-sky-600/20">
+            <i data-lucide="activity" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <span class="text-xl font-extrabold text-slate-900 tracking-tight font-display block">CityCare</span>
+            <span class="text-xs text-sky-600 font-bold tracking-wider uppercase block -mt-1">Diagnostic Center</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-8 h-full">
+          <a href="/citycare/"
+            class="text-sky-600 border-b-2 border-sky-600 font-bold px-1 inline-flex items-center text-sm h-full transition-colors">
+            হোম / Home
           </a>
+          <a href="/citycare/doctors.html"
+            class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+            ডাক্তারগণ / Doctors
+          </a>
+          <a href="/citycare/appointment.html"
+            class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+            অ্যাপয়েন্টমেন্ট / Appointment
+          </a>
+          <a href="/citycare/appointment-history.html"
+            class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+            বুকিং ইতিহাস / Status
+          </a>
+          <a href="/citycare/reports.html"
+            class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+            রিপোর্ট / Online Report
+          </a>
+          <a href="/citycare/contact.html"
+            class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
+            যোগাযোগ / Contact
+          </a>
+        </nav>
 
-          <!-- Desktop Navigation -->
-          <nav class="hidden md:flex space-x-8 h-full">
-            <a href="/citycare/" class="text-sky-600 border-b-2 border-sky-600 font-bold px-1 inline-flex items-center text-sm h-full transition-colors">
-              হোম / Home
-            </a>
-            <a href="/citycare/doctors.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
-              ডাক্তারগণ / Doctors
-            </a>
-            <a href="/citycare/appointment.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
-              অ্যাপয়েন্টমেন্ট / Appointment
-            </a>
-            <a href="/citycare/appointment-history.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
-              বুকিং ইতিহাস / Status
-            </a>
-            <a href="/citycare/reports.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
-              রিপোর্ট / Online Report
-            </a>
-            <a href="/citycare/contact.html" class="text-slate-600 hover:text-sky-600 px-1 inline-flex items-center text-sm h-full transition-colors">
-              যোগাযোগ / Contact
-            </a>
-          </nav>
-
-          <!-- Header Action Block (Desktop) -->
-          <div class="hidden lg:flex items-center space-x-4">
-            <a href="tel:01789555666" class="flex items-center space-x-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors">
-              <i data-lucide="phone-call" class="h-4 w-4 text-sky-600"></i>
-              <span>01789-555666</span>
-            </a>
-            <a href="/citycare/admin-login.html" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-slate-900/10 transition-all">
-              Staff Login
-            </a>
-            <a href="/citycare/appointment.html" class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-sky-600/15 transition-all active:scale-[0.98]">
-              বুকিং করুন / Book Now
-            </a>
-          </div>
-
-          <!-- Mobile Menu Button -->
-          <div class="md:hidden flex items-center">
-            <button id="menu-btn" class="text-slate-700 hover:text-sky-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
-              <i data-lucide="menu" class="h-6 w-6"></i>
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </header>
-
-    <!-- MOBILE NAVIGATION DRAWER -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm">
-      <div class="bg-white w-4/5 max-w-sm h-full p-6 shadow-2xl flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between pb-6 border-b border-slate-100">
-            <div class="flex items-center space-x-2">
-              <div class="bg-sky-600 text-white p-2 rounded-lg">
-                <i data-lucide="activity" class="h-5 w-5"></i>
-              </div>
-              <span class="text-lg font-bold text-slate-900 font-display">CityCare</span>
-            </div>
-            <button id="close-menu-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
-              <i data-lucide="x" class="h-6 w-6"></i>
-            </button>
-          </div>
-
-          <nav class="flex flex-col space-y-3 py-6">
-            <a href="/citycare/" class="text-sky-600 bg-sky-50 font-bold text-base py-2 px-3 rounded-lg block transition-colors">হোম / Home</a>
-            <a href="/citycare/doctors.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">ডাক্তারগণ / Doctors</a>
-            <a href="/citycare/appointment.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অ্যাপয়েন্টমেন্ট / Appointment</a>
-            <a href="/citycare/appointment-history.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">বুকিং ইতিহাস / Status</a>
-            <a href="/citycare/reports.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অনলাইন রিপোর্ট / Online Report</a>
-            <a href="/citycare/contact.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">যোগাযোগ / Contact</a>
-            <a href="/citycare/admin-login.html" class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 flex items-center gap-2 transition-colors border-t border-slate-100 mt-2 pt-4">
-              <i data-lucide="lock" class="h-4 w-4 text-sky-600"></i>
-              <span>Staff Login</span>
-            </a>
-          </nav>
-        </div>
-
-        <div class="border-t border-slate-100 pt-4">
-          <a href="/citycare/appointment.html" class="block text-center w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-sky-600/10 transition-all">
-            অ্যাপয়েন্টমেন্ট বুকিং করুন
+        <!-- Header Action Block (Desktop) -->
+        <div class="hidden lg:flex items-center space-x-4">
+          <a href="tel:01789555666"
+            class="flex items-center space-x-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors">
+            <i data-lucide="phone-call" class="h-4 w-4 text-sky-600"></i>
+            <span>01789-555666</span>
+          </a>
+          <a href="/citycare/admin-login.html"
+            class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-slate-900/10 transition-all">
+            Staff Login
+          </a>
+          <a href="/citycare/appointment.html"
+            class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-sky-600/15 transition-all active:scale-[0.98]">
+            বুকিং করুন / Book Now
           </a>
         </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center">
+          <button id="menu-btn"
+            class="text-slate-700 hover:text-sky-600 p-2 rounded-xl hover:bg-slate-100 transition-colors">
+            <i data-lucide="menu" class="h-6 w-6"></i>
+          </button>
+        </div>
+
       </div>
     </div>
+  </header>
 
-    <!-- MAIN BODY -->
-    <main class="flex-grow">
-
-      <!-- HERO SECTION -->
-      <section class="hero-gradient py-12 md:py-20 border-b border-sky-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            <!-- Left Column: Content -->
-            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-sky-700 bg-sky-100/80 uppercase tracking-widest gap-1.5">
-                <span class="h-2 w-2 rounded-full bg-sky-600 animate-pulse"></span>
-                ISO 9001:2015 Certified Center
-              </span>
-              <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight font-display">
-                সিটি কেয়ার ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার
-                <span class="text-sky-600 block text-2xl md:text-4xl mt-2 font-semibold">Fast & Reliable Diagnostic Services</span>
-              </h1>
-              <p class="text-base text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                মিরপুর-১০ এ অবস্থিত ঢাকা শহরের অন্যতম একটি আধুনিক মেডিকেল ডায়াগনস্টিক কেন্দ্র। আমাদের লক্ষ্য আধুনিক প্রযুক্তি এবং দক্ষ ডাক্তারদের দ্বারা সবচেয়ে নিখুঁত রিপোর্ট এবং নির্ভুল চিকিৎসা সেবা স্বল্প খরচে সরবরাহ করা।
-              </p>
-              <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
-                <a href="/citycare/appointment.html" class="bg-sky-600 hover:bg-sky-700 text-white px-8 py-3.5 rounded-xl font-bold text-base shadow-xl shadow-sky-600/20 transition-all flex items-center justify-center gap-2">
-                  <i data-lucide="calendar"></i>
-                  <span>অ্যাপয়েন্টমেন্ট বুক করুন</span>
-                </a>
-                <a href="/citycare/reports.html" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-8 py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 shadow-sm">
-                  <i data-lucide="download"></i>
-                  <span>অনলাইন রিপোর্ট দেখুন</span>
-                </a>
-              </div>
+  <!-- MOBILE NAVIGATION DRAWER -->
+  <div id="mobile-menu" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm">
+    <div class="bg-white w-4/5 max-w-sm h-full p-6 shadow-2xl flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+          <div class="flex items-center space-x-2">
+            <div class="bg-sky-600 text-white p-2 rounded-lg">
+              <i data-lucide="activity" class="h-5 w-5"></i>
             </div>
-
-            <!-- Right Column: Visual Mockup Design -->
-            <div class="lg:col-span-5 relative hidden lg:block">
-              <div class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/50 space-y-6 relative overflow-hidden">
-                <div class="absolute -right-12 -top-12 w-40 h-40 bg-sky-100 rounded-full blur-3xl opacity-30"></div>
-                
-                <div class="flex items-center space-x-4 border-b border-slate-100 pb-4">
-                  <div class="bg-sky-100 text-sky-600 p-3 rounded-2xl">
-                    <i data-lucide="shield-check" class="h-6 w-6"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-bold text-slate-900 text-lg">Digital Clinical Lab</h3>
-                    <p class="text-xs text-slate-500">Fully Automated Japanese Equipment</p>
-                  </div>
-                </div>
-
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                    <span class="text-sm font-semibold text-slate-700">Online Specialist Booking</span>
-                    <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2.5 py-0.5 rounded-full">bKash / Nagad / Counter</span>
-                  </div>
-                  <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-                    <span class="text-sm font-semibold text-slate-700">Fastest Report Delivery</span>
-                    <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">Secure Link Access</span>
-                  </div>
-                </div>
-
-                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                  <span class="flex items-center gap-1"><i data-lucide="clock" class="h-3.5 w-3.5"></i> Daily 7:00 AM - 11:30 PM</span>
-                  <span class="flex items-center gap-1"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i> Mirpur 10, Dhaka</span>
-                </div>
-              </div>
-            </div>
-
+            <span class="text-lg font-bold text-slate-900 font-display">CityCare</span>
           </div>
+          <button id="close-menu-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="h-6 w-6"></i>
+          </button>
         </div>
-      </section>
 
-      <!-- RECENT LIVE CLINIC STATS BAR -->
-      <section class="bg-slate-900 text-white py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800">
-            <div class="py-2">
-              <p class="text-2xl font-extrabold text-sky-400 font-display">১০,০০০+</p>
-              <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">রোগী সেবা (Happy Patients)</p>
-            </div>
-            <div class="py-2">
-              <p class="text-2xl font-extrabold text-sky-400 font-display">১২+ বিশেষজ্ঞ</p>
-              <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">মেডিকেল কনসালট্যান্ট (Top Doctors)</p>
-            </div>
-            <div class="py-2">
-              <p class="text-2xl font-extrabold text-sky-400 font-display">২৪ ঘন্টার মধ্যে</p>
-              <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">রিপোর্ট ডেলিভারি (Fast Digital Report)</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        <nav class="flex flex-col space-y-3 py-6">
+          <a href="/citycare/"
+            class="text-sky-600 bg-sky-50 font-bold text-base py-2 px-3 rounded-lg block transition-colors">হোম /
+            Home</a>
+          <a href="/citycare/doctors.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">ডাক্তারগণ
+            / Doctors</a>
+          <a href="/citycare/appointment.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অ্যাপয়েন্টমেন্ট
+            / Appointment</a>
+          <a href="/citycare/appointment-history.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">বুকিং
+            ইতিহাস / Status</a>
+          <a href="/citycare/reports.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">অনলাইন
+            রিপোর্ট / Online Report</a>
+          <a href="/citycare/contact.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 block transition-colors">যোগাযোগ
+            / Contact</a>
+          <a href="/citycare/admin-login.html"
+            class="text-slate-600 font-medium text-base py-2 px-3 rounded-lg hover:bg-sky-50 flex items-center gap-2 transition-colors border-t border-slate-100 mt-2 pt-4">
+            <i data-lucide="lock" class="h-4 w-4 text-sky-600"></i>
+            <span>Staff Login</span>
+          </a>
+        </nav>
+      </div>
 
-      <!-- POPULAR CORE DIAGNOSTIC SERVICES -->
-      <section class="py-16 md:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div class="text-center max-w-3xl mx-auto space-y-3 mb-16">
-            <span class="text-sm font-bold text-sky-600 uppercase tracking-widest">Our Medical Packages</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-display">পরীক্ষাসমূহ ও সেবা (Diagnostic Services)</h2>
-            <div class="h-1.5 w-16 bg-sky-600 mx-auto rounded-full"></div>
-            <p class="text-sm text-slate-500">আমাদের মেডিকেল প্যানেল জাপানি ও আমেরিকান আন্তর্জাতিক মানের ডায়াগনস্টিক কিট এবং সলিউশন দিয়ে পরিচালিত হয়।</p>
-          </div>
+      <div class="border-t border-slate-100 pt-4">
+        <a href="/citycare/appointment.html"
+          class="block text-center w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-xl font-semibold shadow-lg shadow-sky-600/10 transition-all">
+          অ্যাপয়েন্টমেন্ট বুকিং করুন
+        </a>
+      </div>
+    </div>
+  </div>
 
-          <!-- Services Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Service 1 -->
-            <div class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
-              <div class="space-y-4">
-                <div class="bg-red-50 text-red-600 p-3.5 rounded-xl inline-block">
-                  <i data-lucide="droplet" class="h-6 w-6"></i>
-                </div>
-                <h3 class="font-extrabold text-slate-900 text-lg">রক্ত পরীক্ষা / Blood Test</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  কমপ্লিট ব্লাড কাউন্ট (CBC), সিরাম ক্রিয়েটিনিন, লিপিড প্রোফাইল, HbA1c এবং থাইরয়েড প্যানেল।
-                </p>
-                <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি: ৪-৬ ঘন্টা</p>
-              </div>
-              <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-900">৳ ৪৫০ - ৩,৫০০</span>
-                <a href="/citycare/appointment.html" class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
-                  বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
-                </a>
-              </div>
-            </div>
+  <!-- MAIN BODY -->
+  <main class="flex-grow">
 
-            <!-- Service 2 -->
-            <div class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
-              <div class="space-y-4">
-                <div class="bg-blue-50 text-blue-600 p-3.5 rounded-xl inline-block">
-                  <i data-lucide="scan" class="h-6 w-6"></i>
-                </div>
-                <h3 class="font-extrabold text-slate-900 text-lg">ডিজিটাল এক্স-রে / X-Ray</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  বুক, কোমড়, জয়েন্ট এবং সাইনাসের ডিজিটাল হাই-রেজোলিউশন এক্স-রে যা দ্রুত ডায়াগনস্টিক করতে সাহায্য করে।
-                </p>
-                <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি: ১ ঘন্টা</p>
-              </div>
-              <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-900">৳ ৫০০ - ১,২০০</span>
-                <a href="/citycare/appointment.html" class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
-                  বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
-                </a>
-              </div>
-            </div>
+    <!-- HERO SECTION -->
+    <section class="hero-gradient py-12 md:py-20 border-b border-sky-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-            <!-- Service 3 -->
-            <div class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
-              <div class="space-y-4">
-                <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl inline-block">
-                  <i data-lucide="radio" class="h-6 w-6"></i>
-                </div>
-                <h3 class="font-extrabold text-slate-900 text-lg">আল্ট্রাসনোগ্রাফি / USG</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  হোল এবডোমেন, প্রেগন্যান্সি প্রোফাইল, ব্রেস্ট ও থাইরয়েড ৪ডি আল্ট্রাসাউন্ড অভিজ্ঞ সনোলজিস্ট দ্বারা।
-                </p>
-                <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি: তাৎক্ষণিক</p>
-              </div>
-              <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-900">৳ ১,০০০ - ২,২০০</span>
-                <a href="/citycare/appointment.html" class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
-                  বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
-                </a>
-              </div>
-            </div>
-
-            <!-- Service 4 -->
-            <div class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
-              <div class="space-y-4">
-                <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl inline-block">
-                  <i data-lucide="heart-pulse" class="h-6 w-6"></i>
-                </div>
-                <h3 class="font-extrabold text-slate-900 text-lg">ডিজিটাল ইসিজি ও ইকো</h3>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                  ১২-লিড কম্পিউটারাইজড ইসিজি ও ২ডি কালার ডপলার ইকোকার্ডিওগ্রাম কার্ডিওলজিস্ট দ্বারা পর্যবেক্ষণ।
-                </p>
-                <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি: ৩০ মিনিট</p>
-              </div>
-              <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
-                <span class="text-sm font-bold text-slate-900">৳ ৪০০ - ২,৫০০</span>
-                <a href="/citycare/appointment.html" class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
-                  বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
-                </a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- FEATURED SPECIALIST DOCTORS (FETCHED DYNAMICALLY FROM BACKEND API) -->
-      <section class="py-16 md:py-24 bg-slate-50 border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div>
-              <span class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-100/80 px-3 py-1 rounded-full inline-block mb-2">
-                Specialist Doctor Directory
-              </span>
-              <h2 class="text-3xl font-extrabold text-slate-900 font-display">আমাদের অভিজ্ঞ বিশেষজ্ঞ ডাক্তারগণ</h2>
-              <p class="text-sm text-slate-500 mt-1">সিটি কেয়ারের নিজস্ব ডাক্তার প্যানেল থেকে পছন্দমত বিশেষজ্ঞের সিরিয়াল বুক করুন।</p>
-            </div>
-            <div>
-              <a href="/citycare/doctors.html" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-sky-600 font-bold px-5 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm transition-all">
-                <span>সকল ডাক্তার দেখুন</span>
-                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          <!-- Left Column: Content -->
+          <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-sky-700 bg-sky-100/80 uppercase tracking-widest gap-1.5">
+              <span class="h-2 w-2 rounded-full bg-sky-600 animate-pulse"></span>
+              ISO 9001:2015 Certified Center
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight font-display">
+              সিটি কেয়ার ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার
+              <span class="text-sky-600 block text-2xl md:text-4xl mt-2 font-semibold">Fast & Reliable Diagnostic
+                Services</span>
+            </h1>
+            <p class="text-base text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              মিরপুর-১০ এ অবস্থিত ঢাকা শহরের অন্যতম একটি আধুনিক মেডিকেল ডায়াগনস্টিক কেন্দ্র। আমাদের লক্ষ্য আধুনিক
+              প্রযুক্তি এবং দক্ষ ডাক্তারদের দ্বারা সবচেয়ে নিখুঁত রিপোর্ট এবং নির্ভুল চিকিৎসা সেবা স্বল্প খরচে সরবরাহ
+              করা।
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+              <a href="/citycare/appointment.html"
+                class="bg-sky-600 hover:bg-sky-700 text-white px-8 py-3.5 rounded-xl font-bold text-base shadow-xl shadow-sky-600/20 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="calendar"></i>
+                <span>অ্যাপয়েন্টমেন্ট বুক করুন</span>
+              </a>
+              <a href="/citycare/reports.html"
+                class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-8 py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 shadow-sm">
+                <i data-lucide="download"></i>
+                <span>অনলাইন রিপোর্ট দেখুন</span>
               </a>
             </div>
           </div>
 
-          <!-- Dynamic Doctors Grid (Rendered from /api/doctors) -->
-          <div id="home-doctors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="col-span-full text-center py-12 text-sm text-slate-400">
-              <div class="inline-block animate-spin text-sky-600 mb-2">
-                <i data-lucide="loader-2" class="h-6 w-6"></i>
+          <!-- Right Column: Visual Mockup Design -->
+          <div class="lg:col-span-5 relative hidden lg:block">
+            <div
+              class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/50 space-y-6 relative overflow-hidden">
+              <div class="absolute -right-12 -top-12 w-40 h-40 bg-sky-100 rounded-full blur-3xl opacity-30"></div>
+
+              <div class="flex items-center space-x-4 border-b border-slate-100 pb-4">
+                <div class="bg-sky-100 text-sky-600 p-3 rounded-2xl">
+                  <i data-lucide="shield-check" class="h-6 w-6"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 text-lg">Digital Clinical Lab</h3>
+                  <p class="text-xs text-slate-500">Fully Automated Japanese Equipment</p>
+                </div>
               </div>
-              <p>ডাক্তারদের তথ্য লোড হচ্ছে...</p>
+
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span class="text-sm font-semibold text-slate-700">Online Specialist Booking</span>
+                  <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2.5 py-0.5 rounded-full">bKash / Nagad /
+                    Counter</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+                  <span class="text-sm font-semibold text-slate-700">Fastest Report Delivery</span>
+                  <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">Secure Link
+                    Access</span>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                <span class="flex items-center gap-1"><i data-lucide="clock" class="h-3.5 w-3.5"></i> Daily 7:00 AM -
+                  11:30 PM</span>
+                <span class="flex items-center gap-1"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i> Mirpur 10,
+                  Dhaka</span>
+              </div>
             </div>
           </div>
 
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- WHY CHOOSE US -->
-      <section class="py-16 md:py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
-              <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center">
-                <i data-lucide="microscope" class="h-6 w-6"></i>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900">১০০% আধুনিক ল্যাব যন্ত্রপাতি</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                আমাদের প্রতিটি টেস্ট স্বয়ংক্রিয় আন্তর্জাতিক কিট ও বায়োকেমিস্ট্রি অ্যানালাইজার দিয়ে পরিচালিত হয়।
-              </p>
-            </div>
-            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
-              <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
-                <i data-lucide="smartphone" class="h-6 w-6"></i>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900">সহজ মোবাইল পেমেন্ট</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                বিকাশ, নগদ অথবা সরাসরি সেন্টারে পৌঁছানোর পর অফলাইনে ক্যাশ কাউন্টারে ফি পরিশোধের পূর্ণ সুবিধা।
-              </p>
-            </div>
-            <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
-              <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
-                <i data-lucide="file-check-2" class="h-6 w-6"></i>
-              </div>
-              <h3 class="text-lg font-bold text-slate-900">অনলাইন রসিদ ও স্ট্যাটাস ট্র্যাকিং</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">
-                মোবাইল নম্বর দিয়ে যেকোনো সময় সিরিয়াল অনুমোদন ও পেমেন্ট ভেরিফিকেশন দেখে প্রিন্ট কপি সংগ্রহ করুন।
-              </p>
-            </div>
+    <!-- RECENT LIVE CLINIC STATS BAR -->
+    <section class="bg-slate-900 text-white py-6">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800">
+          <div class="py-2">
+            <p class="text-2xl font-extrabold text-sky-400 font-display">১০,০০০+</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">রোগী সেবা (Happy Patients)</p>
           </div>
-        </div>
-      </section>
-
-      <!-- CTA BANNER -->
-      <section class="py-12 bg-gradient-to-r from-sky-600 to-sky-700 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <h2 class="text-2xl md:text-3xl font-extrabold font-display">আজই আপনার ডাক্তারের পরামর্শ নিশ্চিত করুন</h2>
-          <p class="text-xs md:text-sm text-sky-100 max-w-xl mx-auto">
-            দীর্ঘ লাইনে দাঁড়িয়ে থাকার ঝামেলা এড়াতে এখনই অনলাইনে আপনার পছন্দের ডাক্তারের সিরিয়াল বুক করুন।
-          </p>
-          <div class="pt-2">
-            <a href="/citycare/appointment.html" class="inline-block bg-white text-sky-700 hover:bg-slate-50 font-bold px-8 py-3.5 rounded-xl text-sm shadow-xl transition-all">
-              অনলাইন সিরিয়াল বুক করুন
-            </a>
+          <div class="py-2">
+            <p class="text-2xl font-extrabold text-sky-400 font-display">১২+ বিশেষজ্ঞ</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">মেডিকেল কনসালট্যান্ট (Top Doctors)</p>
           </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- GLOBAL FOOTER -->
-    <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8 border-b border-slate-800 pb-8 text-sm">
-          
-          <!-- Clinic Brand Description (5 Cols) -->
-          <div class="md:col-span-5 space-y-4">
-            <div class="flex items-center space-x-2">
-              <div class="bg-sky-500 text-white p-2 rounded-lg">
-                <i data-lucide="activity" class="h-5 w-5"></i>
-              </div>
-              <span class="text-lg font-bold text-white font-display">CityCare Diagnostic</span>
-            </div>
-            <p class="text-slate-400 text-xs leading-relaxed">
-              সিটি কেয়ার ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার মিরপুরের অন্যতম বিশ্বাসযোগ্য ও নির্ভরযোগ্য চিকিৎসা সেবা প্রদানকারী প্রতিষ্ঠান। নিখুঁত পরীক্ষার নিশ্চয়তা ও দ্রুততম রিপোর্ট সরবরাহ আমাদের প্রধান বৈশিষ্ট্য।
-            </p>
-            <p class="text-xs text-sky-400 font-bold block font-mono">হটলাইন: 01789-555666 · 01888-112233</p>
-          </div>
-
-          <!-- Shortcuts Links (3 Cols) -->
-          <div class="md:col-span-3 space-y-3">
-            <h4 class="font-semibold text-white tracking-wider uppercase text-xs">আমাদের লিংকসমূহ</h4>
-            <div class="flex flex-col space-y-2 text-xs text-slate-400">
-              <a href="/citycare/" class="hover:text-white transition-colors">হোম / Home</a>
-              <a href="/citycare/doctors.html" class="hover:text-white transition-colors">বিশেষজ্ঞ ডাক্তারগণ</a>
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">অ্যাপয়েন্টমেন্ট বুকিং</a>
-              <a href="/citycare/appointment-history.html" class="hover:text-white transition-colors">বুকিং স্ট্যাটাস ট্র্যাকিং</a>
-              <a href="/citycare/reports.html" class="hover:text-white transition-colors">অনলাইন রিপোর্ট</a>
-              <a href="/citycare/contact.html" class="hover:text-white transition-colors">যোগাযোগ / ঠিকানা</a>
-            </div>
-          </div>
-
-          <!-- Services List Quick Link (4 Cols) -->
-          <div class="md:col-span-4 space-y-3">
-            <h4 class="font-semibold text-white tracking-wider uppercase text-xs">পরীক্ষাসমূহ</h4>
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">রক্ত পরীক্ষা (CBC)</a>
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">ডিজিটাল এক্স-রে</a>
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">আল্ট্রাসনোগ্রাফি</a>
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">ডিজিটাল ইসিজি</a>
-              <a href="/citycare/appointment.html" class="hover:text-white transition-colors">লিপিড প্রোফাইল</a>
-              <a href="/citycare/contact.html" class="hover:text-white transition-colors">অন্যান্য পরীক্ষা</a>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 space-y-4 sm:space-y-0">
-          <p class="text-center sm:text-left">© 2026 CityCare Diagnostic Center Ltd. All Rights Reserved. (সিটি কেয়ার ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার)</p>
-          <div class="flex space-x-4">
-            <a href="/citycare/contact.html" class="hover:text-slate-300">প্রাইভেসি পলিসি</a>
-            <span>|</span>
-            <a href="/citycare/contact.html" class="hover:text-slate-300">শর্তাবলী</a>
+          <div class="py-2">
+            <p class="text-2xl font-extrabold text-sky-400 font-display">২৪ ঘন্টার মধ্যে</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider mt-1">রিপোর্ট ডেলিভারি (Fast Digital Report)</p>
           </div>
         </div>
       </div>
-    </footer>
+    </section>
 
-    <!-- DYNAMIC FLOATING WHATSAPP BUTTON -->
-    <a href="https://wa.me/8801789555666?text=আসসালামু আলাইকুম সিটি কেয়ার, আমি তথ্য জানতে চাই।" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl whatsapp-btn-pulse flex items-center justify-center transition-all duration-300 hover:scale-110" aria-label="Chat on WhatsApp">
-      <i data-lucide="message-circle" class="h-6 w-6"></i>
-    </a>
+    <!-- POPULAR CORE DIAGNOSTIC SERVICES -->
+    <section class="py-16 md:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- PAGE SCRIPT -->
-    <script>
-      const BASE_PATH = "/citycare";
+        <div class="text-center max-w-3xl mx-auto space-y-3 mb-16">
+          <span class="text-sm font-bold text-sky-600 uppercase tracking-widest">Our Medical Packages</span>
+          <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 font-display">পরীক্ষাসমূহ ও সেবা (Diagnostic
+            Services)</h2>
+          <div class="h-1.5 w-16 bg-sky-600 mx-auto rounded-full"></div>
+          <p class="text-sm text-slate-500">আমাদের মেডিকেল প্যানেল জাপানি ও আমেরিকান আন্তর্জাতিক মানের ডায়াগনস্টিক কিট
+            এবং সলিউশন দিয়ে পরিচালিত হয়।</p>
+        </div>
 
-      // Mobile Menu
-      const mobileMenu = document.getElementById("mobile-menu");
-      document.getElementById("menu-btn")?.addEventListener("click", () => mobileMenu.classList.remove("hidden"));
-      document.getElementById("close-menu-btn")?.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+        <!-- Services Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-      // Load Featured Doctors dynamically from Backend API (Single Source of Truth)
-      async function loadFeaturedDoctors() {
-        const grid = document.getElementById("home-doctors-grid");
-        try {
-          const res = await fetch(`${BASE_PATH}/api/doctors`);
-          if (!res.ok) throw new Error("Doctors fetch failed");
-          const doctors = await res.json();
+          <!-- Service 1 -->
+          <div
+            class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="bg-red-50 text-red-600 p-3.5 rounded-xl inline-block">
+                <i data-lucide="droplet" class="h-6 w-6"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-lg">রক্ত পরীক্ষা / Blood Test</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                কমপ্লিট ব্লাড কাউন্ট (CBC), সিরাম ক্রিয়েটিনিন, লিপিড প্রোফাইল, HbA1c এবং থাইরয়েড প্যানেল।
+              </p>
+              <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি:
+                ৪-৬ ঘন্টা</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-900">৳ ৪৫০ - ৩,৫০০</span>
+              <a href="/citycare/appointment.html"
+                class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
+                বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+          </div>
 
-          if (!doctors || doctors.length === 0) {
-            grid.innerHTML = '<div class="col-span-full text-center py-6 text-sm text-slate-400">বর্তমানে কোনো ডাক্তার তালিকাভুক্ত নেই।</div>';
-            return;
-          }
+          <!-- Service 2 -->
+          <div
+            class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="bg-blue-50 text-blue-600 p-3.5 rounded-xl inline-block">
+                <i data-lucide="scan" class="h-6 w-6"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-lg">ডিজিটাল এক্স-রে / X-Ray</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                বুক, কোমড়, জয়েন্ট এবং সাইনাসের ডিজিটাল হাই-রেজোলিউশন এক্স-রে যা দ্রুত ডায়াগনস্টিক করতে সাহায্য করে।
+              </p>
+              <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি: ১
+                ঘন্টা</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-900">৳ ৫০০ - ১,২০০</span>
+              <a href="/citycare/appointment.html"
+                class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
+                বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+          </div>
 
-          grid.innerHTML = doctors.slice(0, 4).map(d => `
+          <!-- Service 3 -->
+          <div
+            class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl inline-block">
+                <i data-lucide="radio" class="h-6 w-6"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-lg">আল্ট্রাসনোগ্রাফি / USG</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                হোল এবডোমেন, প্রেগন্যান্সি প্রোফাইল, ব্রেস্ট ও থাইরয়েড ৪ডি আল্ট্রাসাউন্ড অভিজ্ঞ সনোলজিস্ট দ্বারা।
+              </p>
+              <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি:
+                তাৎক্ষণিক</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-900">৳ ১,০০০ - ২,২০০</span>
+              <a href="/citycare/appointment.html"
+                class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
+                বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Service 4 -->
+          <div
+            class="group bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl inline-block">
+                <i data-lucide="heart-pulse" class="h-6 w-6"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-lg">ডিজিটাল ইসিজি ও ইকো</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                ১২-লিড কম্পিউটারাইজড ইসিজি ও ২ডি কালার ডপলার ইকোকার্ডিওগ্রাম কার্ডিওলজিস্ট দ্বারা পর্যবেক্ষণ।
+              </p>
+              <p class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded inline-block">ডেলিভারি:
+                ৩০ মিনিট</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-900">৳ ৪০০ - ২,৫০০</span>
+              <a href="/citycare/appointment.html"
+                class="text-sky-600 hover:text-sky-700 font-bold text-xs flex items-center gap-1 transition-colors">
+                বুক করুন <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED SPECIALIST DOCTORS (FETCHED DYNAMICALLY FROM BACKEND API) -->
+    <section class="py-16 md:py-24 bg-slate-50 border-t border-slate-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <span
+              class="text-xs font-bold text-sky-600 uppercase tracking-widest bg-sky-100/80 px-3 py-1 rounded-full inline-block mb-2">
+              Specialist Doctor Directory
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-900 font-display">আমাদের অভিজ্ঞ বিশেষজ্ঞ ডাক্তারগণ</h2>
+            <p class="text-sm text-slate-500 mt-1">সিটি কেয়ারের নিজস্ব ডাক্তার প্যানেল থেকে পছন্দমত বিশেষজ্ঞের সিরিয়াল
+              বুক করুন।</p>
+          </div>
+          <div>
+            <a href="/citycare/doctors.html"
+              class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-sky-600 font-bold px-5 py-2.5 rounded-xl border border-slate-200 text-xs shadow-sm transition-all">
+              <span>সকল ডাক্তার দেখুন</span>
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Dynamic Doctors Grid (Rendered from /api/doctors) -->
+        <div id="home-doctors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="col-span-full text-center py-12 text-sm text-slate-400">
+            <div class="inline-block animate-spin text-sky-600 mb-2">
+              <i data-lucide="loader-2" class="h-6 w-6"></i>
+            </div>
+            <p>ডাক্তারদের তথ্য লোড হচ্ছে...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="py-16 md:py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
+            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="microscope" class="h-6 w-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">১০০% আধুনিক ল্যাব যন্ত্রপাতি</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              আমাদের প্রতিটি টেস্ট স্বয়ংক্রিয় আন্তর্জাতিক কিট ও বায়োকেমিস্ট্রি অ্যানালাইজার দিয়ে পরিচালিত হয়।
+            </p>
+          </div>
+          <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="smartphone" class="h-6 w-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">সহজ মোবাইল পেমেন্ট</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              বিকাশ, নগদ অথবা সরাসরি সেন্টারে পৌঁছানোর পর অফলাইনে ক্যাশ কাউন্টারে ফি পরিশোধের পূর্ণ সুবিধা।
+            </p>
+          </div>
+          <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 space-y-3">
+            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center">
+              <i data-lucide="file-check-2" class="h-6 w-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">অনলাইন রসিদ ও স্ট্যাটাস ট্র্যাকিং</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              মোবাইল নম্বর দিয়ে যেকোনো সময় সিরিয়াল অনুমোদন ও পেমেন্ট ভেরিফিকেশন দেখে প্রিন্ট কপি সংগ্রহ করুন।
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="py-12 bg-gradient-to-r from-sky-600 to-sky-700 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+        <h2 class="text-2xl md:text-3xl font-extrabold font-display">আজই আপনার ডাক্তারের পরামর্শ নিশ্চিত করুন</h2>
+        <p class="text-xs md:text-sm text-sky-100 max-w-xl mx-auto">
+          দীর্ঘ লাইনে দাঁড়িয়ে থাকার ঝামেলা এড়াতে এখনই অনলাইনে আপনার পছন্দের ডাক্তারের সিরিয়াল বুক করুন।
+        </p>
+        <div class="pt-2">
+          <a href="/citycare/appointment.html"
+            class="inline-block bg-white text-sky-700 hover:bg-slate-50 font-bold px-8 py-3.5 rounded-xl text-sm shadow-xl transition-all">
+            অনলাইন সিরিয়াল বুক করুন
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GLOBAL FOOTER -->
+  <footer class="bg-slate-900 text-white mt-auto border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8 border-b border-slate-800 pb-8 text-sm">
+
+        <!-- Clinic Brand Description (5 Cols) -->
+        <div class="md:col-span-5 space-y-4">
+          <div class="flex items-center space-x-2">
+            <div class="bg-sky-500 text-white p-2 rounded-lg">
+              <i data-lucide="activity" class="h-5 w-5"></i>
+            </div>
+            <span class="text-lg font-bold text-white font-display">CityCare Diagnostic</span>
+          </div>
+          <p class="text-slate-400 text-xs leading-relaxed">
+            সিটি কেয়ার ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার মিরপুরের অন্যতম বিশ্বাসযোগ্য ও নির্ভরযোগ্য চিকিৎসা সেবা
+            প্রদানকারী প্রতিষ্ঠান। নিখুঁত পরীক্ষার নিশ্চয়তা ও দ্রুততম রিপোর্ট সরবরাহ আমাদের প্রধান বৈশিষ্ট্য।
+          </p>
+          <p class="text-xs text-sky-400 font-bold block font-mono">হটলাইন: 01789-555666 · 01888-112233</p>
+        </div>
+
+        <!-- Shortcuts Links (3 Cols) -->
+        <div class="md:col-span-3 space-y-3">
+          <h4 class="font-semibold text-white tracking-wider uppercase text-xs">আমাদের লিংকসমূহ</h4>
+          <div class="flex flex-col space-y-2 text-xs text-slate-400">
+            <a href="/citycare/" class="hover:text-white transition-colors">হোম / Home</a>
+            <a href="/citycare/doctors.html" class="hover:text-white transition-colors">বিশেষজ্ঞ ডাক্তারগণ</a>
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">অ্যাপয়েন্টমেন্ট বুকিং</a>
+            <a href="/citycare/appointment-history.html" class="hover:text-white transition-colors">বুকিং স্ট্যাটাস
+              ট্র্যাকিং</a>
+            <a href="/citycare/reports.html" class="hover:text-white transition-colors">অনলাইন রিপোর্ট</a>
+            <a href="/citycare/contact.html" class="hover:text-white transition-colors">যোগাযোগ / ঠিকানা</a>
+          </div>
+        </div>
+
+        <!-- Services List Quick Link (4 Cols) -->
+        <div class="md:col-span-4 space-y-3">
+          <h4 class="font-semibold text-white tracking-wider uppercase text-xs">পরীক্ষাসমূহ</h4>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate-400">
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">রক্ত পরীক্ষা (CBC)</a>
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">ডিজিটাল এক্স-রে</a>
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">আল্ট্রাসনোগ্রাফি</a>
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">ডিজিটাল ইসিজি</a>
+            <a href="/citycare/appointment.html" class="hover:text-white transition-colors">লিপিড প্রোফাইল</a>
+            <a href="/citycare/contact.html" class="hover:text-white transition-colors">অন্যান্য পরীক্ষা</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 space-y-4 sm:space-y-0">
+        <p class="text-center sm:text-left">© 2026 CityCare Diagnostic Center Ltd. All Rights Reserved. (সিটি কেয়ার
+          ডায়াগনস্টিক এন্ড কনসালটেশন সেন্টার)</p>
+        <div class="flex space-x-4">
+          <a href="/citycare/contact.html" class="hover:text-slate-300">প্রাইভেসি পলিসি</a>
+          <span>|</span>
+          <a href="/citycare/contact.html" class="hover:text-slate-300">শর্তাবলী</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DYNAMIC FLOATING WHATSAPP BUTTON -->
+  <a href="https://wa.me/8801789555666?text=আসসালামু আলাইকুম সিটি কেয়ার, আমি তথ্য জানতে চাই।" target="_blank"
+    class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-full shadow-2xl whatsapp-btn-pulse flex items-center justify-center transition-all duration-300 hover:scale-110"
+    aria-label="Chat on WhatsApp">
+    <i data-lucide="message-circle" class="h-6 w-6"></i>
+  </a>
+
+  <!-- PAGE SCRIPT -->
+  <script>
+    const BASE_PATH = "/citycare";
+
+    // Mobile Menu
+    const mobileMenu = document.getElementById("mobile-menu");
+    document.getElementById("menu-btn")?.addEventListener("click", () => mobileMenu.classList.remove("hidden"));
+    document.getElementById("close-menu-btn")?.addEventListener("click", () => mobileMenu.classList.add("hidden"));
+
+    // Load Featured Doctors dynamically from Backend API (Single Source of Truth)
+    async function loadFeaturedDoctors() {
+      const grid = document.getElementById("home-doctors-grid");
+      try {
+        const res = await fetch(`${BASE_PATH}/api/doctors`);
+        if (!res.ok) throw new Error("Doctors fetch failed");
+        const doctors = await res.json();
+
+        if (!doctors || doctors.length === 0) {
+          grid.innerHTML = '<div class="col-span-full text-center py-6 text-sm text-slate-400">বর্তমানে কোনো ডাক্তার তালিকাভুক্ত নেই।</div>';
+          return;
+        }
+
+        grid.innerHTML = doctors.slice(0, 4).map(d => `
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-sky-100 transition-all flex flex-col justify-between overflow-hidden">
               <div class="p-6 space-y-3">
                 <div class="flex items-center space-x-3">
@@ -562,26 +636,27 @@
             </div>
           `).join("");
 
-          if (typeof lucide !== "undefined") lucide.createIcons();
-        } catch (err) {
-          grid.innerHTML = '<div class="col-span-full text-center py-6 text-sm text-slate-400">ডাক্তারদের তথ্য লোড করা যায়নি।</div>';
-        }
-      }
-
-      function escapeHtml(str) {
-        if (!str) return "";
-        return String(str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
         if (typeof lucide !== "undefined") lucide.createIcons();
-        loadFeaturedDoctors();
-      });
-    </script>
-  </body>
+      } catch (err) {
+        grid.innerHTML = '<div class="col-span-full text-center py-6 text-sm text-slate-400">ডাক্তারদের তথ্য লোড করা যায়নি।</div>';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof lucide !== "undefined") lucide.createIcons();
+      loadFeaturedDoctors();
+    });
+  </script>
+</body>
+
 </html>

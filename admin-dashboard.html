@@ -1,761 +1,855 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CityCare — Admin Dashboard</title>
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-      html { font-family: 'Hanken Grotesk', 'Inter', sans-serif; }
-      .font-display { font-family: 'Manrope', sans-serif; }
-      @media print {
-        header, .no-print, nav, #analytics-cards, #filter-panel { display: none !important; }
-        body { background: white !important; }
-        main { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-        .tab-section { display: block !important; }
-        #appt-table-wrap { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CityCare — Admin Dashboard</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    html {
+      font-family: 'Hanken Grotesk', 'Inter', sans-serif;
+    }
+
+    .font-display {
+      font-family: 'Manrope', sans-serif;
+    }
+
+    @media print {
+
+      header,
+      .no-print,
+      nav,
+      #analytics-cards,
+      #filter-panel {
+        display: none !important;
       }
-    </style>
-  </head>
-  <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
 
-    <!-- ADMIN HEADER -->
-    <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between flex-wrap gap-4">
-        <div class="flex items-center gap-3">
-          <div class="bg-sky-600 text-white p-2 rounded-xl shadow-md shadow-sky-600/20">
-            <i data-lucide="activity" class="h-5 w-5"></i>
-          </div>
-          <div>
-            <h1 class="text-lg font-extrabold text-slate-900 font-display">CityCare Admin Dashboard</h1>
-            <p class="text-xs text-slate-500">Diagnostic Center & Consultation Management Panel</p>
-          </div>
+      body {
+        background: white !important;
+      }
+
+      main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .tab-section {
+        display: block !important;
+      }
+
+      #appt-table-wrap {
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
+
+  <!-- ADMIN HEADER -->
+  <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-sky-600 text-white p-2 rounded-xl shadow-md shadow-sky-600/20">
+          <i data-lucide="activity" class="h-5 w-5"></i>
         </div>
-
-        <div class="flex items-center gap-3 no-print">
-          <a href="/citycare/admin-upload.html" class="inline-flex items-center gap-1.5 text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-100 px-3.5 py-2 rounded-xl transition-all">
-            <i data-lucide="upload" class="h-4 w-4"></i>
-            <span>Upload Report</span>
-          </a>
-          <a href="/citycare/" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-sky-600 px-3 py-2 transition-colors">
-            <i data-lucide="external-link" class="h-3.5 w-3.5"></i>
-            <span>Live Site</span>
-          </a>
-          <button id="logout-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-xl transition-all">
-            Log Out
-          </button>
+        <div>
+          <h1 class="text-lg font-extrabold text-slate-900 font-display">CityCare Admin Dashboard</h1>
+          <p class="text-xs text-slate-500">Diagnostic Center & Consultation Management Panel</p>
         </div>
       </div>
 
-      <!-- MAIN NAVIGATION TABS -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <nav class="flex gap-6 -mb-px overflow-x-auto text-sm font-bold">
-          <button id="tab-btn-appointments" class="tab-btn border-b-2 border-sky-600 text-sky-600 px-1 py-3 transition-colors flex items-center gap-2">
-            <i data-lucide="calendar" class="h-4 w-4"></i>
-            <span>Appointments</span>
-          </button>
-          <button id="tab-btn-reports" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
-            <i data-lucide="file-text" class="h-4 w-4"></i>
-            <span>Diagnostic Reports</span>
-          </button>
-          <button id="tab-btn-doctors" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
-            <i data-lucide="user-check" class="h-4 w-4"></i>
-            <span>Doctor Directory</span>
-          </button>
-          <button id="tab-btn-settings" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
-            <i data-lucide="settings" class="h-4 w-4"></i>
-            <span>Payment & Center Settings</span>
-          </button>
-        </nav>
+      <div class="flex items-center gap-3 no-print">
+        <a href="/citycare/admin-upload.html"
+          class="inline-flex items-center gap-1.5 text-xs font-bold bg-sky-50 text-sky-700 hover:bg-sky-100 px-3.5 py-2 rounded-xl transition-all">
+          <i data-lucide="upload" class="h-4 w-4"></i>
+          <span>Upload Report</span>
+        </a>
+        <a href="/citycare/" target="_blank"
+          class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-sky-600 px-3 py-2 transition-colors">
+          <i data-lucide="external-link" class="h-3.5 w-3.5"></i>
+          <span>Live Site</span>
+        </a>
+        <button id="logout-btn"
+          class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2 rounded-xl transition-all">
+          Log Out
+        </button>
       </div>
-    </header>
+    </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full">
+    <!-- MAIN NAVIGATION TABS -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <nav class="flex gap-6 -mb-px overflow-x-auto text-sm font-bold">
+        <button id="tab-btn-appointments"
+          class="tab-btn border-b-2 border-sky-600 text-sky-600 px-1 py-3 transition-colors flex items-center gap-2">
+          <i data-lucide="calendar" class="h-4 w-4"></i>
+          <span>Appointments</span>
+        </button>
+        <button id="tab-btn-reports"
+          class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
+          <i data-lucide="file-text" class="h-4 w-4"></i>
+          <span>Diagnostic Reports</span>
+        </button>
+        <button id="tab-btn-doctors"
+          class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
+          <i data-lucide="user-check" class="h-4 w-4"></i>
+          <span>Doctor Directory</span>
+        </button>
+        <button id="tab-btn-settings"
+          class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 transition-colors flex items-center gap-2">
+          <i data-lucide="settings" class="h-4 w-4"></i>
+          <span>Payment & Center Settings</span>
+        </button>
+      </nav>
+    </div>
+  </header>
 
-      <!-- ======================================================== -->
-      <!-- TAB 1: APPOINTMENTS & PAYMENT VERIFICATION               -->
-      <!-- ======================================================== -->
-      <section id="tab-appointments" class="tab-section space-y-8">
-        
-        <!-- SUMMARY STATS OVERVIEW CARDS (PHASE 6) -->
-        <div id="analytics-cards" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          
-          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Total</span>
-            <p id="stat-total" class="text-xl font-extrabold text-slate-900 mt-1">—</p>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full">
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: APPOINTMENTS & PAYMENT VERIFICATION               -->
+    <!-- ======================================================== -->
+    <section id="tab-appointments" class="tab-section space-y-8">
+
+      <!-- SUMMARY STATS OVERVIEW CARDS (PHASE 6) -->
+      <div id="analytics-cards" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Total</span>
+          <p id="stat-total" class="text-xl font-extrabold text-slate-900 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm bg-amber-50/20">
+          <span class="text-[10px] uppercase font-bold text-amber-600 block tracking-wider">Pending Appt</span>
+          <p id="stat-pending" class="text-xl font-extrabold text-amber-700 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm bg-emerald-50/20">
+          <span class="text-[10px] uppercase font-bold text-emerald-600 block tracking-wider">Confirmed</span>
+          <p id="stat-confirmed" class="text-xl font-extrabold text-emerald-700 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-rose-100 shadow-sm bg-rose-50/20">
+          <span class="text-[10px] uppercase font-bold text-rose-500 block tracking-wider">Cancelled</span>
+          <p id="stat-cancelled" class="text-xl font-extrabold text-rose-600 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-pink-100 shadow-sm bg-pink-50/20">
+          <span class="text-[10px] uppercase font-bold text-pink-600 block tracking-wider">Verif. Pending</span>
+          <p id="stat-verif-pending" class="text-xl font-extrabold text-pink-700 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-teal-100 shadow-sm bg-teal-50/20">
+          <span class="text-[10px] uppercase font-bold text-teal-600 block tracking-wider">Verified Paid</span>
+          <p id="stat-verified-paid" class="text-xl font-extrabold text-teal-700 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+          <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Unpaid</span>
+          <p id="stat-unpaid" class="text-xl font-extrabold text-slate-700 mt-1">—</p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm bg-sky-50/20">
+          <span class="text-[10px] uppercase font-bold text-sky-600 block tracking-wider">Booked Today</span>
+          <p id="stat-today" class="text-xl font-extrabold text-sky-700 mt-1">—</p>
+        </div>
+
+      </div>
+
+      <!-- SEARCH & FILTER TOOLBAR (PHASE 3 & 6) -->
+      <div id="filter-panel" class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+
+          <!-- Universal Search Input -->
+          <div class="md:col-span-5 relative">
+            <i data-lucide="search" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
+            <input type="text" id="appt-search" placeholder="Search patient name, phone, booking ref, or TrxID..."
+              class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-xs focus:border-sky-500 focus:bg-white outline-none" />
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm bg-amber-50/20">
-            <span class="text-[10px] uppercase font-bold text-amber-600 block tracking-wider">Pending Appt</span>
-            <p id="stat-pending" class="text-xl font-extrabold text-amber-700 mt-1">—</p>
+          <!-- Appointment Status Filter -->
+          <div class="md:col-span-2">
+            <select id="filter-appt-status"
+              class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
+              <option value="all">Appt Status: All</option>
+              <option value="pending">Pending Approval</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm bg-emerald-50/20">
-            <span class="text-[10px] uppercase font-bold text-emerald-600 block tracking-wider">Confirmed</span>
-            <p id="stat-confirmed" class="text-xl font-extrabold text-emerald-700 mt-1">—</p>
+          <!-- Payment Status Filter -->
+          <div class="md:col-span-2">
+            <select id="filter-payment-status"
+              class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
+              <option value="all">Payment: All</option>
+              <option value="verification_pending">Verification Pending</option>
+              <option value="verified">Verified Paid</option>
+              <option value="unpaid">Unpaid</option>
+              <option value="rejected">Rejected</option>
+            </select>
           </div>
 
-          <div class="bg-white p-4 rounded-2xl border border-rose-100 shadow-sm bg-rose-50/20">
-            <span class="text-[10px] uppercase font-bold text-rose-500 block tracking-wider">Cancelled</span>
-            <p id="stat-cancelled" class="text-xl font-extrabold text-rose-600 mt-1">—</p>
-          </div>
-
-          <div class="bg-white p-4 rounded-2xl border border-pink-100 shadow-sm bg-pink-50/20">
-            <span class="text-[10px] uppercase font-bold text-pink-600 block tracking-wider">Verif. Pending</span>
-            <p id="stat-verif-pending" class="text-xl font-extrabold text-pink-700 mt-1">—</p>
-          </div>
-
-          <div class="bg-white p-4 rounded-2xl border border-teal-100 shadow-sm bg-teal-50/20">
-            <span class="text-[10px] uppercase font-bold text-teal-600 block tracking-wider">Verified Paid</span>
-            <p id="stat-verified-paid" class="text-xl font-extrabold text-teal-700 mt-1">—</p>
-          </div>
-
-          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-            <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Unpaid</span>
-            <p id="stat-unpaid" class="text-xl font-extrabold text-slate-700 mt-1">—</p>
-          </div>
-
-          <div class="bg-white p-4 rounded-2xl border border-sky-100 shadow-sm bg-sky-50/20">
-            <span class="text-[10px] uppercase font-bold text-sky-600 block tracking-wider">Booked Today</span>
-            <p id="stat-today" class="text-xl font-extrabold text-sky-700 mt-1">—</p>
+          <!-- Date Range Preset Filter -->
+          <div class="md:col-span-3 flex gap-2">
+            <select id="filter-date-range"
+              class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
+              <option value="all">Date: All Time</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="this_week">This Week (Last 7 Days)</option>
+              <option value="this_month">This Month</option>
+              <option value="custom">Custom Date Range...</option>
+            </select>
           </div>
 
         </div>
 
-        <!-- SEARCH & FILTER TOOLBAR (PHASE 3 & 6) -->
-        <div id="filter-panel" class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
-          
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-            
-            <!-- Universal Search Input -->
-            <div class="md:col-span-5 relative">
-              <i data-lucide="search" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
-              <input type="text" id="appt-search" placeholder="Search patient name, phone, booking ref, or TrxID..."
-                class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-xs focus:border-sky-500 focus:bg-white outline-none" />
-            </div>
+        <!-- Secondary Row: Date Options & Export Actions -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
 
-            <!-- Appointment Status Filter -->
-            <div class="md:col-span-2">
-              <select id="filter-appt-status"
-                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
-                <option value="all">Appt Status: All</option>
-                <option value="pending">Pending Approval</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="text-slate-400 font-semibold">Filter By:</span>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="filter-date-field" value="appointment_date" checked class="text-sky-600" />
+              <span class="text-slate-700">Appointment Date</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="filter-date-field" value="created_at" class="text-sky-600" />
+              <span class="text-slate-700">Booking Creation Date</span>
+            </label>
 
-            <!-- Payment Status Filter -->
-            <div class="md:col-span-2">
-              <select id="filter-payment-status"
-                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
-                <option value="all">Payment: All</option>
-                <option value="verification_pending">Verification Pending</option>
-                <option value="verified">Verified Paid</option>
-                <option value="unpaid">Unpaid</option>
-                <option value="rejected">Rejected</option>
-              </select>
+            <!-- Custom date inputs (revealed when custom selected) -->
+            <div id="custom-date-box" class="hidden flex items-center gap-2">
+              <input type="date" id="filter-start-date"
+                class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs" />
+              <span class="text-slate-400">to</span>
+              <input type="date" id="filter-end-date"
+                class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs" />
+              <button id="apply-custom-date-btn"
+                class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-lg font-bold">Apply</button>
             </div>
-
-            <!-- Date Range Preset Filter -->
-            <div class="md:col-span-3 flex gap-2">
-              <select id="filter-date-range"
-                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3 py-2.5 text-xs focus:border-sky-500 outline-none font-semibold">
-                <option value="all">Date: All Time</option>
-                <option value="today">Today</option>
-                <option value="yesterday">Yesterday</option>
-                <option value="this_week">This Week (Last 7 Days)</option>
-                <option value="this_month">This Month</option>
-                <option value="custom">Custom Date Range...</option>
-              </select>
-            </div>
-
           </div>
 
-          <!-- Secondary Row: Date Options & Export Actions -->
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
-            
-            <div class="flex flex-wrap items-center gap-3">
-              <span class="text-slate-400 font-semibold">Filter By:</span>
-              <label class="flex items-center gap-1.5 cursor-pointer">
-                <input type="radio" name="filter-date-field" value="appointment_date" checked class="text-sky-600" />
-                <span class="text-slate-700">Appointment Date</span>
-              </label>
-              <label class="flex items-center gap-1.5 cursor-pointer">
-                <input type="radio" name="filter-date-field" value="created_at" class="text-sky-600" />
-                <span class="text-slate-700">Booking Creation Date</span>
-              </label>
-
-              <!-- Custom date inputs (revealed when custom selected) -->
-              <div id="custom-date-box" class="hidden flex items-center gap-2">
-                <input type="date" id="filter-start-date" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs" />
-                <span class="text-slate-400">to</span>
-                <input type="date" id="filter-end-date" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs" />
-                <button id="apply-custom-date-btn" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded-lg font-bold">Apply</button>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <button id="clear-filters-btn" class="text-slate-500 hover:text-slate-800 font-bold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
-                Reset Filters
-              </button>
-              <button id="print-appts-btn" onclick="window.print()" class="text-slate-700 hover:text-slate-900 font-bold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors flex items-center gap-1.5">
-                <i data-lucide="printer" class="h-3.5 w-3.5"></i>
-                <span>Print</span>
-              </button>
-              <button id="export-csv-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
-                <i data-lucide="file-spreadsheet" class="h-3.5 w-3.5"></i>
-                <span>Export CSV</span>
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-        <!-- APPOINTMENTS TABLE -->
-        <div>
-          <div id="appt-state-loading" class="text-center py-16 text-sm text-slate-500">
-            <div class="inline-block animate-spin text-sky-600 mb-2">
-              <i data-lucide="loader-2" class="h-6 w-6"></i>
-            </div>
-            <p>Loading appointments from database…</p>
-          </div>
-
-          <div id="appt-state-empty" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
-            <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-2">
-              <i data-lucide="calendar-x" class="h-6 w-6"></i>
-            </div>
-            <p class="font-bold text-slate-800 text-sm">No appointment records match the current filter.</p>
-            <p class="text-xs text-slate-500">Try adjusting your search criteria or resetting filters.</p>
-          </div>
-
-          <div id="appt-table-wrap" class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
-                <tr>
-                  <th class="py-3 px-4">Booking Ref</th>
-                  <th class="py-3 px-4">Patient</th>
-                  <th class="py-3 px-4">Doctor & Specialty</th>
-                  <th class="py-3 px-4">Date / Slot</th>
-                  <th class="py-3 px-4">Payment Details</th>
-                  <th class="py-3 px-4">Payment Status</th>
-                  <th class="py-3 px-4">Appt Status</th>
-                  <th class="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="appointments-body" class="divide-y divide-slate-100 font-sans">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 2: DIAGNOSTIC REPORT MANAGEMENT & SEARCH (PHASE 7)   -->
-      <!-- ======================================================== -->
-      <section id="tab-reports" class="tab-section hidden space-y-6">
-
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">Diagnostic Reports Management</h2>
-            <p class="text-xs text-slate-500">Search uploaded test reports by Patient Mobile Number OR Report ID</p>
-          </div>
-          <div>
-            <a href="/citycare/admin-upload.html" class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md shadow-sky-600/15">
-              <i data-lucide="upload" class="h-4 w-4"></i>
-              <span>Upload New Patient Report</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- SEARCH BAR (PHASE 7: independent Mobile Number or Report ID search) -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-3">
-          <form id="report-search-form" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-            
-            <div class="sm:col-span-4">
-              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Search by Report ID
-              </label>
-              <div class="relative">
-                <i data-lucide="hash" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
-                <input type="text" id="report-search-id" placeholder="e.g. CC-9018..."
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-xs focus:border-sky-500 outline-none uppercase font-mono" />
-              </div>
-            </div>
-
-            <div class="sm:col-span-5">
-              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Search by Patient Mobile Number
-              </label>
-              <div class="relative">
-                <i data-lucide="phone" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
-                <input type="tel" id="report-search-phone" placeholder="e.g. 017XXXXXXXX..."
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-xs focus:border-sky-500 outline-none font-mono" />
-              </div>
-            </div>
-
-            <div class="sm:col-span-3 flex gap-2">
-              <button type="submit" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
-                <i data-lucide="search" class="h-3.5 w-3.5"></i>
-                <span>Search</span>
-              </button>
-              <button type="button" id="clear-report-search-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs transition-colors">
-                Clear
-              </button>
-            </div>
-
-          </form>
-        </div>
-
-        <!-- REPORTS TABLE -->
-        <div>
-          <div id="state-loading" class="text-center py-16 text-sm text-slate-500">
-            <div class="inline-block animate-spin text-sky-600 mb-2">
-              <i data-lucide="loader-2" class="h-6 w-6"></i>
-            </div>
-            <p>Loading diagnostic reports from database…</p>
-          </div>
-
-          <div id="state-empty" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
-            <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-2">
-              <i data-lucide="file-x" class="h-6 w-6"></i>
-            </div>
-            <p class="font-bold text-slate-800 text-sm">No diagnostic reports found.</p>
-            <p class="text-xs text-slate-500">Verify the mobile number or Report ID and try again.</p>
-          </div>
-
-          <div id="table-wrap" class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
-                <tr>
-                  <th class="py-3 px-4">Report ID</th>
-                  <th class="py-3 px-4">Patient Name</th>
-                  <th class="py-3 px-4">Phone</th>
-                  <th class="py-3 px-4">Test Date</th>
-                  <th class="py-3 px-4 text-center">Views</th>
-                  <th class="py-3 px-4 text-center">Downloads</th>
-                  <th class="py-3 px-4">Uploaded</th>
-                  <th class="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="reports-body" class="divide-y divide-slate-100 font-sans">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 3: DOCTOR DIRECTORY MANAGEMENT (PHASE 5)             -->
-      <!-- ======================================================== -->
-      <section id="tab-doctors" class="tab-section hidden space-y-6">
-
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h2 class="text-lg font-extrabold text-slate-900">Doctor Directory Management</h2>
-            <p class="text-xs text-slate-500">Add, edit, activate, deactivate, or delete doctors in the database</p>
-          </div>
-          <button id="add-doctor-btn" class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md shadow-sky-600/15">
-            <i data-lucide="plus" class="h-4 w-4"></i>
-            <span>Add New Doctor</span>
-          </button>
-        </div>
-
-        <!-- Add/Edit Doctor Form Modal/Box -->
-        <div id="doctor-form-wrap" class="hidden bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-8 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 id="doctor-form-title" class="font-extrabold text-slate-900 text-base">Add New Doctor</h3>
-            <button id="doctor-form-close-btn" class="text-slate-400 hover:text-slate-600 p-1">
-              <i data-lucide="x" class="h-5 w-5"></i>
+          <div class="flex items-center gap-2">
+            <button id="clear-filters-btn"
+              class="text-slate-500 hover:text-slate-800 font-bold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+              Reset Filters
+            </button>
+            <button id="print-appts-btn" onclick="window.print()"
+              class="text-slate-700 hover:text-slate-900 font-bold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors flex items-center gap-1.5">
+              <i data-lucide="printer" class="h-3.5 w-3.5"></i>
+              <span>Print</span>
+            </button>
+            <button id="export-csv-btn"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="file-spreadsheet" class="h-3.5 w-3.5"></i>
+              <span>Export CSV</span>
             </button>
           </div>
 
-          <div id="doctor-form-error" class="hidden bg-rose-50 border border-rose-100 p-3 rounded-xl text-xs text-rose-700 font-semibold"></div>
-
-          <form id="doctor-form" class="space-y-4 text-xs">
-            <input type="hidden" id="doctor-id" />
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Doctor Name *</label>
-                <input type="text" id="doctor-name" required placeholder="e.g. Dr. M. A. Rahman"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Specialty / Department *</label>
-                <input type="text" id="doctor-category" list="category-options" required placeholder="e.g. Medicine, Cardiology"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
-                <datalist id="category-options"></datalist>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Degrees & Qualifications</label>
-                <input type="text" id="doctor-degree" placeholder="e.g. MBBS, FCPS (Medicine)"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Experience</label>
-                <input type="text" id="doctor-experience" placeholder="e.g. ১০+ বছর"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Chamber Schedule / Time</label>
-                <input type="text" id="doctor-chamber-time" placeholder="e.g. ৫:০০ PM - ৯:০০ PM (শনি - বুধ)"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Consultation Fee (BDT) *</label>
-                <input type="number" id="doctor-fee" required min="0" step="50" placeholder="e.g. 800"
-                  class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none font-mono" />
-              </div>
-            </div>
-
-            <div class="pt-2 flex items-center gap-2">
-              <input type="checkbox" id="doctor-active" checked class="rounded border-slate-300 text-sky-600 focus:ring-sky-500 h-4 w-4" />
-              <label for="doctor-active" class="font-bold text-slate-700 cursor-pointer">
-                Active (Show doctor in public directory and booking form)
-              </label>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
-              <button type="button" id="doctor-form-cancel" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl">
-                Cancel
-              </button>
-              <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-5 py-2 rounded-xl shadow-md shadow-sky-600/15">
-                Save Doctor
-              </button>
-            </div>
-          </form>
         </div>
 
-        <!-- DOCTORS TABLE -->
+      </div>
+
+      <!-- APPOINTMENTS TABLE -->
+      <div>
+        <div id="appt-action-msg" class="hidden mb-3 p-4 rounded-2xl text-xs font-bold border"></div>
+        <div id="appt-state-loading" class="text-center py-16 text-sm text-slate-500">
+          <div class="inline-block animate-spin text-sky-600 mb-2">
+            <i data-lucide="loader-2" class="h-6 w-6"></i>
+          </div>
+          <p>Loading appointments from database…</p>
+        </div>
+
+        <div id="appt-state-empty"
+          class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
+          <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-2">
+            <i data-lucide="calendar-x" class="h-6 w-6"></i>
+          </div>
+          <p class="font-bold text-slate-800 text-sm">No appointment records match the current filter.</p>
+          <p class="text-xs text-slate-500">Try adjusting your search criteria or resetting filters.</p>
+        </div>
+
+        <div id="appt-table-wrap"
+          class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Booking Ref</th>
+                <th class="py-3 px-4">Patient</th>
+                <th class="py-3 px-4">Doctor & Specialty</th>
+                <th class="py-3 px-4">Date / Slot</th>
+                <th class="py-3 px-4">Payment Details</th>
+                <th class="py-3 px-4">Payment Status</th>
+                <th class="py-3 px-4">Appt Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appointments-body" class="divide-y divide-slate-100 font-sans">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: DIAGNOSTIC REPORT MANAGEMENT & SEARCH (PHASE 7)   -->
+    <!-- ======================================================== -->
+    <section id="tab-reports" class="tab-section hidden space-y-6">
+
+      <div class="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <div id="doctors-state-loading" class="text-center py-16 text-sm text-slate-500">Loading doctors…</div>
-
-          <div id="doctors-table-wrap" class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
-                <tr>
-                  <th class="py-3 px-4">Doctor Name</th>
-                  <th class="py-3 px-4">Specialty</th>
-                  <th class="py-3 px-4">Degrees</th>
-                  <th class="py-3 px-4">Chamber Time</th>
-                  <th class="py-3 px-4">Fee</th>
-                  <th class="py-3 px-4 text-center">Status</th>
-                  <th class="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="doctors-body" class="divide-y divide-slate-100 font-sans">
-                <!-- Rendered dynamically -->
-              </tbody>
-            </table>
-          </div>
+          <h2 class="text-lg font-extrabold text-slate-900">Diagnostic Reports Management</h2>
+          <p class="text-xs text-slate-500">Search uploaded test reports by Patient Mobile Number OR Report ID</p>
         </div>
-
-      </section>
-
-      <!-- ======================================================== -->
-      <!-- TAB 4: PAYMENT CONFIGURATION & CENTER SETTINGS (PHASE 2) -->
-      <!-- ======================================================== -->
-      <section id="tab-settings" class="tab-section hidden space-y-6">
-
-        <div class="max-w-3xl">
-          <h2 class="text-lg font-extrabold text-slate-900">Payment & Center Settings</h2>
-          <p class="text-xs text-slate-500">Configure public bKash/Nagad accounts, toggle payment methods, and update center contact details.</p>
+        <div>
+          <a href="/citycare/admin-upload.html"
+            class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md shadow-sky-600/15">
+            <i data-lucide="upload" class="h-4 w-4"></i>
+            <span>Upload New Patient Report</span>
+          </a>
         </div>
+      </div>
 
-        <div id="settings-success" class="hidden max-w-3xl bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-2xl text-xs flex items-center gap-2">
-          <i data-lucide="check-circle" class="h-4 w-4 text-emerald-600 shrink-0"></i>
-          <span>Settings saved successfully and updated across the public portal.</span>
-        </div>
+      <!-- SEARCH BAR (PHASE 7: independent Mobile Number or Report ID search) -->
+      <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm space-y-3">
+        <form id="report-search-form" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
 
-        <form id="settings-form" class="max-w-3xl space-y-6 text-xs">
-
-          <!-- bKash Settings Card -->
-          <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-7 h-7 bg-pink-100 text-pink-600 rounded-lg flex items-center justify-center font-bold text-xs">bK</span>
-                <h3 class="font-bold text-slate-900 text-sm">bKash Payment Configuration</h3>
-              </div>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="set-bkash-enabled" class="rounded text-pink-600 h-4 w-4" />
-                <span class="font-bold text-slate-700">Enable bKash Option</span>
-              </label>
-            </div>
-
-            <div class="space-y-3">
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">bKash Account Number *</label>
-                <input type="text" id="set-bkash-number" required placeholder="e.g. 017XXXXXXXX"
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono focus:border-pink-600 outline-none" />
-                <p class="text-[11px] text-slate-400 mt-1">This number will be displayed to patients when booking via bKash.</p>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">bKash Instructions</label>
-                <textarea id="set-bkash-instructions" rows="2"
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-pink-600 outline-none"></textarea>
-              </div>
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+              Search by Report ID
+            </label>
+            <div class="relative">
+              <i data-lucide="hash" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
+              <input type="text" id="report-search-id" placeholder="e.g. CC-9018..."
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-xs focus:border-sky-500 outline-none uppercase font-mono" />
             </div>
           </div>
 
-          <!-- Nagad Settings Card -->
-          <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center font-bold text-xs">NG</span>
-                <h3 class="font-bold text-slate-900 text-sm">Nagad Payment Configuration</h3>
-              </div>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="set-nagad-enabled" class="rounded text-orange-600 h-4 w-4" />
-                <span class="font-bold text-slate-700">Enable Nagad Option</span>
-              </label>
-            </div>
-
-            <div class="space-y-3">
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Nagad Account Number *</label>
-                <input type="text" id="set-nagad-number" required placeholder="e.g. 017XXXXXXXX"
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono focus:border-orange-600 outline-none" />
-                <p class="text-[11px] text-slate-400 mt-1">This number will be displayed to patients when booking via Nagad.</p>
-              </div>
-
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Nagad Instructions</label>
-                <textarea id="set-nagad-instructions" rows="2"
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-orange-600 outline-none"></textarea>
-              </div>
+          <div class="sm:col-span-5">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+              Search by Patient Mobile Number
+            </label>
+            <div class="relative">
+              <i data-lucide="phone" class="absolute left-3.5 top-3 h-4 w-4 text-slate-400"></i>
+              <input type="tel" id="report-search-phone" placeholder="e.g. 017XXXXXXXX..."
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 pl-10 pr-3 py-2 text-xs focus:border-sky-500 outline-none font-mono" />
             </div>
           </div>
 
-          <!-- Pay at Center Settings Card -->
-          <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-7 h-7 bg-sky-100 text-sky-600 rounded-lg flex items-center justify-center font-bold text-xs">
-                  <i data-lucide="building-2" class="h-4 w-4"></i>
-                </span>
-                <h3 class="font-bold text-slate-900 text-sm">Offline Pay at Center</h3>
-              </div>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="set-center-enabled" class="rounded text-sky-600 h-4 w-4" />
-                <span class="font-bold text-slate-700">Enable Pay at Center</span>
-              </label>
-            </div>
-
-            <div>
-              <label class="block font-bold text-slate-700 uppercase mb-1">Pay at Center Instructions</label>
-              <textarea id="set-center-instructions" rows="2"
-                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none"></textarea>
-            </div>
-          </div>
-
-          <!-- Center Details Card -->
-          <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
-            <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">Center Public Details</h3>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="sm:col-span-2">
-                <label class="block font-bold text-slate-700 uppercase mb-1">Center Name</label>
-                <input type="text" id="set-center-name" required
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Hotline / Contact</label>
-                <input type="text" id="set-center-hotline" required
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none font-mono" />
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 uppercase mb-1">Address</label>
-                <input type="text" id="set-center-address" required
-                  class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none" />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button type="submit" id="save-settings-btn"
-              class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-md shadow-sky-600/15 text-xs transition-all flex items-center gap-2">
-              <i data-lucide="save" class="h-4 w-4"></i>
-              <span>Save Configuration Settings</span>
+          <div class="sm:col-span-3 flex gap-2">
+            <button type="submit"
+              class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="search" class="h-3.5 w-3.5"></i>
+              <span>Search</span>
+            </button>
+            <button type="button" id="clear-report-search-btn"
+              class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs transition-colors">
+              Clear
             </button>
           </div>
 
         </form>
+      </div>
 
-      </section>
+      <!-- REPORTS TABLE -->
+      <div>
+        <div id="state-loading" class="text-center py-16 text-sm text-slate-500">
+          <div class="inline-block animate-spin text-sky-600 mb-2">
+            <i data-lucide="loader-2" class="h-6 w-6"></i>
+          </div>
+          <p>Loading diagnostic reports from database…</p>
+        </div>
 
-    </main>
+        <div id="state-empty"
+          class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-2">
+          <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-2">
+            <i data-lucide="file-x" class="h-6 w-6"></i>
+          </div>
+          <p class="font-bold text-slate-800 text-sm">No diagnostic reports found.</p>
+          <p class="text-xs text-slate-500">Verify the mobile number or Report ID and try again.</p>
+        </div>
 
-    <!-- PAGE SCRIPT -->
-    <script>
-      const BASE_PATH = "/citycare";
+        <div id="table-wrap" class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Report ID</th>
+                <th class="py-3 px-4">Patient Name</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4">Test Date</th>
+                <th class="py-3 px-4 text-center">Views</th>
+                <th class="py-3 px-4 text-center">Downloads</th>
+                <th class="py-3 px-4">Uploaded</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reports-body" class="divide-y divide-slate-100 font-sans">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      function escapeHtml(str) {
-        if (str === null || str === undefined) return "";
-        return String(str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
+    </section>
 
-      async function handleAuthRedirect(res) {
-        if (res.status === 401) {
-          window.location.href = `${BASE_PATH}/admin-login.html`;
-          return true;
-        }
-        return false;
-      }
+    <!-- ======================================================== -->
+    <!-- TAB 3: DOCTOR DIRECTORY MANAGEMENT (PHASE 5)             -->
+    <!-- ======================================================== -->
+    <section id="tab-doctors" class="tab-section hidden space-y-6">
 
-      // Logout
-      document.getElementById("logout-btn")?.addEventListener("click", async () => {
-        await fetch(`${BASE_PATH}/api/logout`, { method: "POST" });
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-900">Doctor Directory Management</h2>
+          <p class="text-xs text-slate-500">Add, edit, activate, deactivate, or delete doctors in the database</p>
+        </div>
+        <button id="add-doctor-btn"
+          class="inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md shadow-sky-600/15">
+          <i data-lucide="plus" class="h-4 w-4"></i>
+          <span>Add New Doctor</span>
+        </button>
+      </div>
+
+      <!-- Add/Edit Doctor Form Modal/Box -->
+      <div id="doctor-form-wrap"
+        class="hidden bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-8 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 id="doctor-form-title" class="font-extrabold text-slate-900 text-base">Add New Doctor</h3>
+          <button id="doctor-form-close-btn" class="text-slate-400 hover:text-slate-600 p-1">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+
+        <div id="doctor-form-error"
+          class="hidden bg-rose-50 border border-rose-100 p-3 rounded-xl text-xs text-rose-700 font-semibold"></div>
+
+        <form id="doctor-form" class="space-y-4 text-xs">
+          <input type="hidden" id="doctor-id" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Doctor Name *</label>
+              <input type="text" id="doctor-name" required placeholder="e.g. Dr. M. A. Rahman"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Specialty / Department *</label>
+              <input type="text" id="doctor-category" list="category-options" required
+                placeholder="e.g. Medicine, Cardiology"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
+              <datalist id="category-options"></datalist>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Degrees & Qualifications</label>
+              <input type="text" id="doctor-degree" placeholder="e.g. MBBS, FCPS (Medicine)"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Experience</label>
+              <input type="text" id="doctor-experience" placeholder="e.g. ১০+ বছর"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Chamber Schedule / Time</label>
+              <input type="text" id="doctor-chamber-time" placeholder="e.g. ৫:০০ PM - ৯:০০ PM (শনি - বুধ)"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Consultation Fee (BDT) *</label>
+              <input type="number" id="doctor-fee" required min="0" step="50" placeholder="e.g. 800"
+                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-500 outline-none font-mono" />
+            </div>
+          </div>
+
+          <div class="pt-2 flex items-center gap-2">
+            <input type="checkbox" id="doctor-active" checked
+              class="rounded border-slate-300 text-sky-600 focus:ring-sky-500 h-4 w-4" />
+            <label for="doctor-active" class="font-bold text-slate-700 cursor-pointer">
+              Active (Show doctor in public directory and booking form)
+            </label>
+          </div>
+
+          <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+            <button type="button" id="doctor-form-cancel"
+              class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl">
+              Cancel
+            </button>
+            <button type="submit"
+              class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-5 py-2 rounded-xl shadow-md shadow-sky-600/15">
+              Save Doctor
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- DOCTORS TABLE -->
+      <div>
+        <div id="doctors-state-loading" class="text-center py-16 text-sm text-slate-500">Loading doctors…</div>
+
+        <div id="doctors-table-wrap"
+          class="hidden bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Doctor Name</th>
+                <th class="py-3 px-4">Specialty</th>
+                <th class="py-3 px-4">Degrees</th>
+                <th class="py-3 px-4">Chamber Time</th>
+                <th class="py-3 px-4">Fee</th>
+                <th class="py-3 px-4 text-center">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="doctors-body" class="divide-y divide-slate-100 font-sans">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: PAYMENT CONFIGURATION & CENTER SETTINGS (PHASE 2) -->
+    <!-- ======================================================== -->
+    <section id="tab-settings" class="tab-section hidden space-y-6">
+
+      <div class="max-w-3xl">
+        <h2 class="text-lg font-extrabold text-slate-900">Payment & Center Settings</h2>
+        <p class="text-xs text-slate-500">Configure public bKash/Nagad accounts, toggle payment methods, and update
+          center contact details.</p>
+      </div>
+
+      <div id="settings-success"
+        class="hidden max-w-3xl bg-emerald-50 border border-emerald-200 text-emerald-900 p-4 rounded-2xl text-xs flex items-center gap-2">
+        <i data-lucide="check-circle" class="h-4 w-4 text-emerald-600 shrink-0"></i>
+        <span>Settings saved successfully and updated across the public portal.</span>
+      </div>
+
+      <div id="settings-error"
+        class="hidden max-w-3xl bg-rose-50 border border-rose-200 text-rose-900 p-4 rounded-2xl text-xs flex items-center gap-2">
+        <i data-lucide="alert-circle" class="h-4 w-4 text-rose-600 shrink-0"></i>
+        <span id="settings-error-text">Settings could not be saved.</span>
+      </div>
+
+      <form id="settings-form" class="max-w-3xl space-y-6 text-xs">
+
+        <!-- bKash Settings Card -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span
+                class="w-7 h-7 bg-pink-100 text-pink-600 rounded-lg flex items-center justify-center font-bold text-xs">bK</span>
+              <h3 class="font-bold text-slate-900 text-sm">bKash Payment Configuration</h3>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="set-bkash-enabled" class="rounded text-pink-600 h-4 w-4" />
+              <span class="font-bold text-slate-700">Enable bKash Option</span>
+            </label>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">bKash Account Number *</label>
+              <input type="text" id="set-bkash-number" required placeholder="e.g. 017XXXXXXXX"
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono focus:border-pink-600 outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">This number will be displayed to patients when booking via
+                bKash.</p>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">bKash Instructions</label>
+              <textarea id="set-bkash-instructions" rows="2"
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-pink-600 outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nagad Settings Card -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span
+                class="w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center font-bold text-xs">NG</span>
+              <h3 class="font-bold text-slate-900 text-sm">Nagad Payment Configuration</h3>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="set-nagad-enabled" class="rounded text-orange-600 h-4 w-4" />
+              <span class="font-bold text-slate-700">Enable Nagad Option</span>
+            </label>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Nagad Account Number *</label>
+              <input type="text" id="set-nagad-number" required placeholder="e.g. 017XXXXXXXX"
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono focus:border-orange-600 outline-none" />
+              <p class="text-[11px] text-slate-400 mt-1">This number will be displayed to patients when booking via
+                Nagad.</p>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Nagad Instructions</label>
+              <textarea id="set-nagad-instructions" rows="2"
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-orange-600 outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pay at Center Settings Card -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <span
+                class="w-7 h-7 bg-sky-100 text-sky-600 rounded-lg flex items-center justify-center font-bold text-xs">
+                <i data-lucide="building-2" class="h-4 w-4"></i>
+              </span>
+              <h3 class="font-bold text-slate-900 text-sm">Offline Pay at Center</h3>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="set-center-enabled" class="rounded text-sky-600 h-4 w-4" />
+              <span class="font-bold text-slate-700">Enable Pay at Center</span>
+            </label>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Pay at Center Instructions</label>
+            <textarea id="set-center-instructions" rows="2"
+              class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Center Details Card -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+          <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-3">Center Public Details</h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block font-bold text-slate-700 uppercase mb-1">Center Name</label>
+              <input type="text" id="set-center-name" required
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Hotline / Contact</label>
+              <input type="text" id="set-center-hotline" required
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none font-mono" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 uppercase mb-1">Address</label>
+              <input type="text" id="set-center-address" required
+                class="w-full bg-slate-50 rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs focus:border-sky-600 outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" id="save-settings-btn"
+            class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-md shadow-sky-600/15 text-xs transition-all flex items-center gap-2">
+            <i data-lucide="save" class="h-4 w-4"></i>
+            <span>Save Configuration Settings</span>
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <!-- PAGE SCRIPT -->
+  <script>
+    const BASE_PATH = "/citycare";
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function handleAuthRedirect(res) {
+      if (res.status === 401) {
         window.location.href = `${BASE_PATH}/admin-login.html`;
+        return true;
+      }
+      return false;
+    }
+
+    // Read the backend's JSON error message (falls back when the body is not JSON, e.g. an HTML 500 page)
+    async function readApiError(res, fallback) {
+      try {
+        const data = await res.json();
+        if (data && typeof data.error === "string" && data.error) return data.error;
+      } catch (_) { /* non-JSON body */ }
+      return fallback;
+    }
+
+    let apptMsgTimer;
+    function showApptMessage(text, ok) {
+      const el = document.getElementById("appt-action-msg");
+      if (!el) return;
+      el.textContent = text;
+      el.className = "mb-3 p-4 rounded-2xl text-xs font-bold border " +
+        (ok ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-rose-50 border-rose-200 text-rose-900");
+      clearTimeout(apptMsgTimer);
+      apptMsgTimer = setTimeout(() => el.classList.add("hidden"), 6000);
+    }
+
+    // Logout
+    document.getElementById("logout-btn")?.addEventListener("click", async () => {
+      await fetch(`${BASE_PATH}/api/logout`, { method: "POST" });
+      window.location.href = `${BASE_PATH}/admin-login.html`;
+    });
+
+    // TAB SWITCHER
+    const tabs = {
+      appointments: document.getElementById("tab-appointments"),
+      reports: document.getElementById("tab-reports"),
+      doctors: document.getElementById("tab-doctors"),
+      settings: document.getElementById("tab-settings"),
+    };
+    const tabBtns = {
+      appointments: document.getElementById("tab-btn-appointments"),
+      reports: document.getElementById("tab-btn-reports"),
+      doctors: document.getElementById("tab-btn-doctors"),
+      settings: document.getElementById("tab-btn-settings"),
+    };
+
+    function switchTab(name) {
+      Object.keys(tabs).forEach(k => {
+        tabs[k].classList.add("hidden");
+        tabBtns[k].classList.remove("border-sky-600", "text-sky-600");
+        tabBtns[k].classList.add("border-transparent", "text-slate-500");
       });
+      tabs[name].classList.remove("hidden");
+      tabBtns[name].classList.add("border-sky-600", "text-sky-600");
+      tabBtns[name].classList.remove("border-transparent", "text-slate-500");
 
-      // TAB SWITCHER
-      const tabs = {
-        appointments: document.getElementById("tab-appointments"),
-        reports: document.getElementById("tab-reports"),
-        doctors: document.getElementById("tab-doctors"),
-        settings: document.getElementById("tab-settings"),
-      };
-      const tabBtns = {
-        appointments: document.getElementById("tab-btn-appointments"),
-        reports: document.getElementById("tab-btn-reports"),
-        doctors: document.getElementById("tab-btn-doctors"),
-        settings: document.getElementById("tab-btn-settings"),
-      };
+      if (name === "appointments") { loadStats(); loadAppointments(); }
+      if (name === "reports") { loadReports(); }
+      if (name === "doctors") { loadDoctors(); }
+      if (name === "settings") { loadSettings(); }
+      if (typeof lucide !== "undefined") lucide.createIcons();
+    }
 
-      function switchTab(name) {
-        Object.keys(tabs).forEach(k => {
-          tabs[k].classList.add("hidden");
-          tabBtns[k].classList.remove("border-sky-600", "text-sky-600");
-          tabBtns[k].classList.add("border-transparent", "text-slate-500");
-        });
-        tabs[name].classList.remove("hidden");
-        tabBtns[name].classList.add("border-sky-600", "text-sky-600");
-        tabBtns[name].classList.remove("border-transparent", "text-slate-500");
+    Object.keys(tabBtns).forEach(k => {
+      tabBtns[k].addEventListener("click", () => switchTab(k));
+    });
 
-        if (name === "appointments") { loadStats(); loadAppointments(); }
-        if (name === "reports") { loadReports(); }
-        if (name === "doctors") { loadDoctors(); }
-        if (name === "settings") { loadSettings(); }
-        if (typeof lucide !== "undefined") lucide.createIcons();
+    // ==========================================================
+    // TAB 1: APPOINTMENTS LOGIC
+    // ==========================================================
+    let allAppointments = [];
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${BASE_PATH}/api/appointments/stats`);
+        if (await handleAuthRedirect(res)) return;
+        const data = await res.json();
+        document.getElementById("stat-total").textContent = data.total ?? 0;
+        document.getElementById("stat-pending").textContent = data.pending ?? 0;
+        document.getElementById("stat-confirmed").textContent = data.confirmed ?? 0;
+        document.getElementById("stat-cancelled").textContent = data.cancelled ?? 0;
+        document.getElementById("stat-verif-pending").textContent = data.verificationPending ?? 0;
+        document.getElementById("stat-verified-paid").textContent = data.verified ?? 0;
+        document.getElementById("stat-unpaid").textContent = data.unpaid ?? 0;
+        document.getElementById("stat-today").textContent = data.bookedToday ?? 0;
+      } catch (err) {
+        console.error("Stats load failed:", err);
       }
+    }
 
-      Object.keys(tabBtns).forEach(k => {
-        tabBtns[k].addEventListener("click", () => switchTab(k));
-      });
+    async function loadAppointments() {
+      const loadingEl = document.getElementById("appt-state-loading");
+      const emptyEl = document.getElementById("appt-state-empty");
+      const tableWrap = document.getElementById("appt-table-wrap");
 
-      // ==========================================================
-      // TAB 1: APPOINTMENTS LOGIC
-      // ==========================================================
-      let allAppointments = [];
+      loadingEl.classList.remove("hidden");
+      emptyEl.classList.add("hidden");
+      tableWrap.classList.add("hidden");
 
-      async function loadStats() {
-        try {
-          const res = await fetch(`${BASE_PATH}/api/appointments/stats`);
-          if (await handleAuthRedirect(res)) return;
-          const data = await res.json();
-          document.getElementById("stat-total").textContent = data.total ?? 0;
-          document.getElementById("stat-pending").textContent = data.pending ?? 0;
-          document.getElementById("stat-confirmed").textContent = data.confirmed ?? 0;
-          document.getElementById("stat-cancelled").textContent = data.cancelled ?? 0;
-          document.getElementById("stat-verif-pending").textContent = data.verificationPending ?? 0;
-          document.getElementById("stat-verified-paid").textContent = data.verified ?? 0;
-          document.getElementById("stat-unpaid").textContent = data.unpaid ?? 0;
-          document.getElementById("stat-today").textContent = data.bookedToday ?? 0;
-        } catch (err) {
-          console.error("Stats load failed:", err);
+      const search = document.getElementById("appt-search")?.value.trim() || "";
+      const status = document.getElementById("filter-appt-status")?.value || "all";
+      const paymentStatus = document.getElementById("filter-payment-status")?.value || "all";
+      const dateRange = document.getElementById("filter-date-range")?.value || "all";
+      const dateFieldRadio = document.querySelector('input[name="filter-date-field"]:checked');
+      const dateField = dateFieldRadio ? dateFieldRadio.value : "appointment_date";
+      const startDate = document.getElementById("filter-start-date")?.value || "";
+      const endDate = document.getElementById("filter-end-date")?.value || "";
+
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (status !== "all") params.set("status", status);
+      if (paymentStatus !== "all") params.set("paymentStatus", paymentStatus);
+      if (dateRange !== "all") params.set("dateRange", dateRange);
+      params.set("dateField", dateField);
+      if (dateRange === "custom" && startDate) params.set("startDate", startDate);
+      if (dateRange === "custom" && endDate) params.set("endDate", endDate);
+
+      try {
+        const res = await fetch(`${BASE_PATH}/api/appointments?${params.toString()}`, { credentials: "same-origin" });
+        if (await handleAuthRedirect(res)) return;
+        if (!res.ok) throw new Error("Failed to load appointments");
+        allAppointments = await res.json();
+
+        loadingEl.classList.add("hidden");
+        if (!allAppointments.length) {
+          emptyEl.classList.remove("hidden");
+          return;
         }
+
+        tableWrap.classList.remove("hidden");
+        renderAppointmentRows(allAppointments);
+      } catch (err) {
+        loadingEl.textContent = "Failed to load appointments.";
       }
+    }
 
-      async function loadAppointments() {
-        const loadingEl = document.getElementById("appt-state-loading");
-        const emptyEl = document.getElementById("appt-state-empty");
-        const tableWrap = document.getElementById("appt-table-wrap");
+    function renderAppointmentRows(appointments) {
+      const body = document.getElementById("appointments-body");
 
-        loadingEl.classList.remove("hidden");
-        emptyEl.classList.add("hidden");
-        tableWrap.classList.add("hidden");
+      body.innerHTML = appointments.map(a => {
+        // Appt status badge
+        let apptBadge = "bg-amber-100 text-amber-800";
+        if (a.status === "confirmed") apptBadge = "bg-emerald-100 text-emerald-800";
+        if (a.status === "cancelled") apptBadge = "bg-rose-100 text-rose-800";
 
-        const search = document.getElementById("appt-search")?.value.trim() || "";
-        const status = document.getElementById("filter-appt-status")?.value || "all";
-        const paymentStatus = document.getElementById("filter-payment-status")?.value || "all";
-        const dateRange = document.getElementById("filter-date-range")?.value || "all";
-        const dateFieldRadio = document.querySelector('input[name="filter-date-field"]:checked');
-        const dateField = dateFieldRadio ? dateFieldRadio.value : "appointment_date";
-        const startDate = document.getElementById("filter-start-date")?.value || "";
-        const endDate = document.getElementById("filter-end-date")?.value || "";
+        // Payment status badge
+        let payBadge = "bg-slate-100 text-slate-700";
+        if (a.payment_status === "verified") payBadge = "bg-emerald-100 text-emerald-800 font-bold";
+        if (a.payment_status === "verification_pending") payBadge = "bg-pink-100 text-pink-800 font-bold";
+        if (a.payment_status === "rejected") payBadge = "bg-rose-100 text-rose-800";
 
-        const params = new URLSearchParams();
-        if (search) params.set("search", search);
-        if (status !== "all") params.set("status", status);
-        if (paymentStatus !== "all") params.set("paymentStatus", paymentStatus);
-        if (dateRange !== "all") params.set("dateRange", dateRange);
-        params.set("dateField", dateField);
-        if (dateRange === "custom" && startDate) params.set("startDate", startDate);
-        if (dateRange === "custom" && endDate) params.set("endDate", endDate);
+        // Payment method display
+        let methodIcon = '<i data-lucide="building-2" class="h-3 w-3 inline text-slate-500"></i> Center';
+        if (a.payment_method === "bkash") methodIcon = '<span class="text-pink-600 font-bold">bKash</span>';
+        if (a.payment_method === "nagad") methodIcon = '<span class="text-orange-600 font-bold">Nagad</span>';
 
-        try {
-          const res = await fetch(`${BASE_PATH}/api/appointments?${params.toString()}`);
-          if (await handleAuthRedirect(res)) return;
-          allAppointments = await res.json();
+        const receiptLink = `${BASE_PATH}/receipt/${a.access_token || a.booking_reference}`;
 
-          loadingEl.classList.add("hidden");
-          if (!allAppointments.length) {
-            emptyEl.classList.remove("hidden");
-            return;
-          }
-
-          tableWrap.classList.remove("hidden");
-          renderAppointmentRows(allAppointments);
-        } catch (err) {
-          loadingEl.textContent = "Failed to load appointments.";
-        }
-      }
-
-      function renderAppointmentRows(appointments) {
-        const body = document.getElementById("appointments-body");
-
-        body.innerHTML = appointments.map(a => {
-          // Appt status badge
-          let apptBadge = "bg-amber-100 text-amber-800";
-          if (a.status === "confirmed") apptBadge = "bg-emerald-100 text-emerald-800";
-          if (a.status === "cancelled") apptBadge = "bg-rose-100 text-rose-800";
-
-          // Payment status badge
-          let payBadge = "bg-slate-100 text-slate-700";
-          if (a.payment_status === "verified") payBadge = "bg-emerald-100 text-emerald-800 font-bold";
-          if (a.payment_status === "verification_pending") payBadge = "bg-pink-100 text-pink-800 font-bold";
-          if (a.payment_status === "rejected") payBadge = "bg-rose-100 text-rose-800";
-
-          // Payment method display
-          let methodIcon = '<i data-lucide="building-2" class="h-3 w-3 inline text-slate-500"></i> Center';
-          if (a.payment_method === "bkash") methodIcon = '<span class="text-pink-600 font-bold">bKash</span>';
-          if (a.payment_method === "nagad") methodIcon = '<span class="text-orange-600 font-bold">Nagad</span>';
-
-          const receiptLink = `${BASE_PATH}/receipt/${a.access_token || a.booking_reference}`;
-
-          return `
+        return `
             <tr class="hover:bg-slate-50/80 transition-colors">
               <td class="py-3 px-4">
                 <span class="font-mono font-bold text-slate-900 block">${escapeHtml(a.booking_reference || "—")}</span>
@@ -780,8 +874,8 @@
               <td class="py-3 px-4">
                 <div class="space-y-0.5">
                   <span class="block">${methodIcon}</span>
-                  ${a.payment_sender_phone ? `<span class="font-mono text-slate-600 text-[10px] block">From: ${escapeHtml(a.payment_sender_phone)}</span>` : ''}
-                  ${a.transaction_id ? `<span class="font-mono text-sky-700 text-[10px] font-bold block">Trx: ${escapeHtml(a.transaction_id)}</span>` : ''}
+                  ${a.payment_sender_phone ? `<span class="font-mono text-slate-600 text-[10px] block">From: ${escapeHtml(a.payment_sender_phone)}</span>` : ((a.payment_method === "bkash" || a.payment_method === "nagad") ? '<span class="text-slate-400 text-[10px] block">Sender: —</span>' : '')}
+                  ${a.transaction_id ? `<span class="font-mono text-sky-700 text-[10px] font-bold block">Trx: ${escapeHtml(a.transaction_id)}</span>` : ((a.payment_method === "bkash" || a.payment_method === "nagad") ? '<span class="text-slate-400 text-[10px] block">Trx: —</span>' : '')}
                 </div>
               </td>
 
@@ -824,160 +918,168 @@
               </td>
             </tr>
           `;
-        }).join("");
+      }).join("");
 
-        // Payment status change listeners
-        body.querySelectorAll(".pay-status-select").forEach(sel => {
-          sel.addEventListener("change", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            const paymentStatus = e.target.value;
-            try {
-              const res = await fetch(`${BASE_PATH}/api/appointments/${id}/payment`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ paymentStatus }),
-              });
-              if (await handleAuthRedirect(res)) return;
-              if (!res.ok) throw new Error("Payment update failed");
-              loadStats();
-              loadAppointments();
-            } catch (err) {
-              alert("Payment status update failed.");
-            }
-          });
-        });
-
-        // Appt status change listeners
-        body.querySelectorAll(".appt-status-select").forEach(sel => {
-          sel.addEventListener("change", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            const status = e.target.value;
-            try {
-              const res = await fetch(`${BASE_PATH}/api/appointments/${id}/approval`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status }),
-              });
-              if (await handleAuthRedirect(res)) return;
-              if (!res.ok) throw new Error("Status update failed");
-              loadStats();
-              loadAppointments();
-            } catch (err) {
-              alert("Appointment status update failed.");
-            }
-          });
-        });
-
-        // Delete listener
-        body.querySelectorAll(".delete-appt-btn").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.currentTarget.getAttribute("data-id");
-            if (!confirm("Are you sure you want to delete this appointment record?")) return;
-            try {
-              const res = await fetch(`${BASE_PATH}/api/appointments/${id}`, { method: "DELETE" });
-              if (await handleAuthRedirect(res)) return;
-              if (!res.ok) throw new Error("Delete failed");
-              loadStats();
-              loadAppointments();
-            } catch (err) {
-              alert("Could not delete appointment.");
-            }
-          });
-        });
-
-        if (typeof lucide !== "undefined") lucide.createIcons();
-      }
-
-      // Filter events
-      document.getElementById("appt-search")?.addEventListener("input", debounce(loadAppointments, 350));
-      document.getElementById("filter-appt-status")?.addEventListener("change", loadAppointments);
-      document.getElementById("filter-payment-status")?.addEventListener("change", loadAppointments);
-      document.querySelectorAll('input[name="filter-date-field"]').forEach(r => r.addEventListener("change", loadAppointments));
-
-      document.getElementById("filter-date-range")?.addEventListener("change", (e) => {
-        const customBox = document.getElementById("custom-date-box");
-        if (e.target.value === "custom") {
-          customBox.classList.remove("hidden");
-        } else {
-          customBox.classList.add("hidden");
-          loadAppointments();
-        }
-      });
-
-      document.getElementById("apply-custom-date-btn")?.addEventListener("click", loadAppointments);
-
-      document.getElementById("clear-filters-btn")?.addEventListener("click", () => {
-        document.getElementById("appt-search").value = "";
-        document.getElementById("filter-appt-status").value = "all";
-        document.getElementById("filter-payment-status").value = "all";
-        document.getElementById("filter-date-range").value = "all";
-        document.getElementById("custom-date-box").classList.add("hidden");
-        document.getElementById("filter-start-date").value = "";
-        document.getElementById("filter-end-date").value = "";
-        loadAppointments();
-      });
-
-      // Export CSV
-      document.getElementById("export-csv-btn")?.addEventListener("click", () => {
-        const search = document.getElementById("appt-search").value.trim();
-        const status = document.getElementById("filter-appt-status").value;
-        const paymentStatus = document.getElementById("filter-payment-status").value;
-        const params = new URLSearchParams();
-        if (search) params.set("search", search);
-        if (status !== "all") params.set("status", status);
-        if (paymentStatus !== "all") params.set("paymentStatus", paymentStatus);
-        window.location.href = `${BASE_PATH}/api/appointments/export-csv?${params.toString()}`;
-      });
-
-      function debounce(fn, ms) {
-        let timer;
-        return function(...args) {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn.apply(this, args), ms);
-        };
-      }
-
-      // ==========================================================
-      // TAB 2: DIAGNOSTIC REPORTS LOGIC (PHASE 7)
-      // ==========================================================
-      let allReports = [];
-
-      async function loadReports(queryObj = {}) {
-        const loadingEl = document.getElementById("state-loading");
-        const emptyEl = document.getElementById("state-empty");
-        const tableWrap = document.getElementById("table-wrap");
-
-        loadingEl.classList.remove("hidden");
-        emptyEl.classList.add("hidden");
-        tableWrap.classList.add("hidden");
-
-        const params = new URLSearchParams();
-        if (queryObj.reportId) params.set("reportId", queryObj.reportId);
-        if (queryObj.phone) params.set("phone", queryObj.phone);
-
-        try {
-          const res = await fetch(`${BASE_PATH}/api/reports?${params.toString()}`);
-          if (await handleAuthRedirect(res)) return;
-          allReports = await res.json();
-
-          loadingEl.classList.add("hidden");
-          if (!allReports.length) {
-            emptyEl.classList.remove("hidden");
-            return;
+      // Payment status change listeners
+      body.querySelectorAll(".pay-status-select").forEach(sel => {
+        sel.addEventListener("change", async (e) => {
+          const id = e.target.getAttribute("data-id");
+          const paymentStatus = e.target.value;
+          e.target.disabled = true;
+          try {
+            const res = await fetch(`${BASE_PATH}/api/appointments/${id}/payment`, {
+              method: "PUT",
+              credentials: "same-origin",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ paymentStatus }),
+            });
+            if (await handleAuthRedirect(res)) return;
+            if (!res.ok) throw new Error(await readApiError(res, "Payment status update failed."));
+            showApptMessage("Payment status updated.", true);
+            loadStats();
+            loadAppointments();
+          } catch (err) {
+            showApptMessage(err.message || "Payment status update failed.", false);
+            loadAppointments(); // re-sync the dropdown with the real saved value
           }
+        });
+      });
 
-          tableWrap.classList.remove("hidden");
-          renderReportRows(allReports);
-        } catch (err) {
-          loadingEl.textContent = "Failed to load reports.";
-        }
+      // Appt status change listeners
+      body.querySelectorAll(".appt-status-select").forEach(sel => {
+        sel.addEventListener("change", async (e) => {
+          const id = e.target.getAttribute("data-id");
+          const status = e.target.value;
+          e.target.disabled = true;
+          try {
+            const res = await fetch(`${BASE_PATH}/api/appointments/${id}/approval`, {
+              method: "PUT",
+              credentials: "same-origin",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status }),
+            });
+            if (await handleAuthRedirect(res)) return;
+            if (!res.ok) throw new Error(await readApiError(res, "Appointment status update failed."));
+            showApptMessage("Appointment status updated.", true);
+            loadStats();
+            loadAppointments();
+          } catch (err) {
+            showApptMessage(err.message || "Appointment status update failed.", false);
+            loadAppointments(); // re-sync the dropdown with the real saved value
+          }
+        });
+      });
+
+      // Delete listener
+      body.querySelectorAll(".delete-appt-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const id = e.currentTarget.getAttribute("data-id");
+          if (!confirm("Are you sure you want to delete this appointment record?")) return;
+          try {
+            const res = await fetch(`${BASE_PATH}/api/appointments/${id}`, { method: "DELETE" });
+            if (await handleAuthRedirect(res)) return;
+            if (!res.ok) throw new Error("Delete failed");
+            loadStats();
+            loadAppointments();
+          } catch (err) {
+            alert("Could not delete appointment.");
+          }
+        });
+      });
+
+      if (typeof lucide !== "undefined") lucide.createIcons();
+    }
+
+    // Filter events
+    document.getElementById("appt-search")?.addEventListener("input", debounce(loadAppointments, 350));
+    document.getElementById("filter-appt-status")?.addEventListener("change", loadAppointments);
+    document.getElementById("filter-payment-status")?.addEventListener("change", loadAppointments);
+    document.querySelectorAll('input[name="filter-date-field"]').forEach(r => r.addEventListener("change", loadAppointments));
+
+    document.getElementById("filter-date-range")?.addEventListener("change", (e) => {
+      const customBox = document.getElementById("custom-date-box");
+      if (e.target.value === "custom") {
+        customBox.classList.remove("hidden");
+      } else {
+        customBox.classList.add("hidden");
+        loadAppointments();
       }
+    });
 
-      function renderReportRows(reports) {
-        const body = document.getElementById("reports-body");
-        body.innerHTML = reports.map(r => {
-          const link = `${window.location.origin}${BASE_PATH}/report/${r.token}`;
-          return `
+    document.getElementById("apply-custom-date-btn")?.addEventListener("click", loadAppointments);
+
+    document.getElementById("clear-filters-btn")?.addEventListener("click", () => {
+      document.getElementById("appt-search").value = "";
+      document.getElementById("filter-appt-status").value = "all";
+      document.getElementById("filter-payment-status").value = "all";
+      document.getElementById("filter-date-range").value = "all";
+      document.getElementById("custom-date-box").classList.add("hidden");
+      document.getElementById("filter-start-date").value = "";
+      document.getElementById("filter-end-date").value = "";
+      loadAppointments();
+    });
+
+    // Export CSV
+    document.getElementById("export-csv-btn")?.addEventListener("click", () => {
+      const search = document.getElementById("appt-search").value.trim();
+      const status = document.getElementById("filter-appt-status").value;
+      const paymentStatus = document.getElementById("filter-payment-status").value;
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (status !== "all") params.set("status", status);
+      if (paymentStatus !== "all") params.set("paymentStatus", paymentStatus);
+      window.location.href = `${BASE_PATH}/api/appointments/export-csv?${params.toString()}`;
+    });
+
+    function debounce(fn, ms) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), ms);
+      };
+    }
+
+    // ==========================================================
+    // TAB 2: DIAGNOSTIC REPORTS LOGIC (PHASE 7)
+    // ==========================================================
+    let allReports = [];
+
+    async function loadReports(queryObj = {}) {
+      const loadingEl = document.getElementById("state-loading");
+      const emptyEl = document.getElementById("state-empty");
+      const tableWrap = document.getElementById("table-wrap");
+
+      loadingEl.classList.remove("hidden");
+      emptyEl.classList.add("hidden");
+      tableWrap.classList.add("hidden");
+
+      const params = new URLSearchParams();
+      if (queryObj.reportId) params.set("reportId", queryObj.reportId);
+      if (queryObj.phone) params.set("phone", queryObj.phone);
+
+      try {
+        const res = await fetch(`${BASE_PATH}/api/reports?${params.toString()}`);
+        if (await handleAuthRedirect(res)) return;
+        allReports = await res.json();
+
+        loadingEl.classList.add("hidden");
+        if (!allReports.length) {
+          emptyEl.classList.remove("hidden");
+          return;
+        }
+
+        tableWrap.classList.remove("hidden");
+        renderReportRows(allReports);
+      } catch (err) {
+        loadingEl.textContent = "Failed to load reports.";
+      }
+    }
+
+    function renderReportRows(reports) {
+      const body = document.getElementById("reports-body");
+      body.innerHTML = reports.map(r => {
+        const link = `${window.location.origin}${BASE_PATH}/report/${r.token}`;
+        return `
             <tr class="hover:bg-slate-50/80 transition-colors">
               <td class="py-3 px-4 font-mono font-bold text-sky-700">${escapeHtml(r.report_id || "—")}</td>
               <td class="py-3 px-4 font-bold text-slate-900">${escapeHtml(r.patient_name)}</td>
@@ -997,119 +1099,119 @@
               </td>
             </tr>
           `;
-        }).join("");
+      }).join("");
 
-        if (typeof lucide !== "undefined") lucide.createIcons();
-      }
+      if (typeof lucide !== "undefined") lucide.createIcons();
+    }
 
-      document.getElementById("report-search-form")?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const reportId = document.getElementById("report-search-id").value.trim();
-        const phone = document.getElementById("report-search-phone").value.trim();
-        loadReports({ reportId, phone });
-      });
+    document.getElementById("report-search-form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const reportId = document.getElementById("report-search-id").value.trim();
+      const phone = document.getElementById("report-search-phone").value.trim();
+      loadReports({ reportId, phone });
+    });
 
-      document.getElementById("clear-report-search-btn")?.addEventListener("click", () => {
-        document.getElementById("report-search-id").value = "";
-        document.getElementById("report-search-phone").value = "";
-        loadReports({});
-      });
+    document.getElementById("clear-report-search-btn")?.addEventListener("click", () => {
+      document.getElementById("report-search-id").value = "";
+      document.getElementById("report-search-phone").value = "";
+      loadReports({});
+    });
 
-      // ==========================================================
-      // TAB 3: DOCTOR DIRECTORY LOGIC (PHASE 5)
-      // ==========================================================
-      let allDoctors = [];
-      const doctorFormWrap = document.getElementById("doctor-form-wrap");
-      const doctorForm = document.getElementById("doctor-form");
-      const doctorFormTitle = document.getElementById("doctor-form-title");
-      const doctorFormError = document.getElementById("doctor-form-error");
+    // ==========================================================
+    // TAB 3: DOCTOR DIRECTORY LOGIC (PHASE 5)
+    // ==========================================================
+    let allDoctors = [];
+    const doctorFormWrap = document.getElementById("doctor-form-wrap");
+    const doctorForm = document.getElementById("doctor-form");
+    const doctorFormTitle = document.getElementById("doctor-form-title");
+    const doctorFormError = document.getElementById("doctor-form-error");
 
-      function openDoctorForm(doctor) {
-        doctorFormError.classList.add("hidden");
-        if (doctor) {
-          doctorFormTitle.textContent = "Edit Doctor";
-          document.getElementById("doctor-id").value = doctor.id;
-          document.getElementById("doctor-name").value = doctor.name;
-          document.getElementById("doctor-category").value = doctor.specialty_category;
-          document.getElementById("doctor-degree").value = doctor.degree || "";
-          document.getElementById("doctor-experience").value = doctor.experience || "";
-          document.getElementById("doctor-chamber-time").value = doctor.chamber_time || "";
-          document.getElementById("doctor-fee").value = doctor.fee;
-          document.getElementById("doctor-active").checked = !!doctor.active;
-        } else {
-          doctorFormTitle.textContent = "Add Doctor";
-          doctorForm.reset();
-          document.getElementById("doctor-id").value = "";
-          document.getElementById("doctor-active").checked = true;
-        }
-        doctorFormWrap.classList.remove("hidden");
-        doctorFormWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-
-      function closeDoctorForm() {
-        doctorFormWrap.classList.add("hidden");
+    function openDoctorForm(doctor) {
+      doctorFormError.classList.add("hidden");
+      if (doctor) {
+        doctorFormTitle.textContent = "Edit Doctor";
+        document.getElementById("doctor-id").value = doctor.id;
+        document.getElementById("doctor-name").value = doctor.name;
+        document.getElementById("doctor-category").value = doctor.specialty_category;
+        document.getElementById("doctor-degree").value = doctor.degree || "";
+        document.getElementById("doctor-experience").value = doctor.experience || "";
+        document.getElementById("doctor-chamber-time").value = doctor.chamber_time || "";
+        document.getElementById("doctor-fee").value = doctor.fee;
+        document.getElementById("doctor-active").checked = !!doctor.active;
+      } else {
+        doctorFormTitle.textContent = "Add Doctor";
         doctorForm.reset();
+        document.getElementById("doctor-id").value = "";
+        document.getElementById("doctor-active").checked = true;
       }
+      doctorFormWrap.classList.remove("hidden");
+      doctorFormWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
 
-      document.getElementById("add-doctor-btn")?.addEventListener("click", () => openDoctorForm(null));
-      document.getElementById("doctor-form-cancel")?.addEventListener("click", closeDoctorForm);
-      document.getElementById("doctor-form-close-btn")?.addEventListener("click", closeDoctorForm);
+    function closeDoctorForm() {
+      doctorFormWrap.classList.add("hidden");
+      doctorForm.reset();
+    }
 
-      doctorForm?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        doctorFormError.classList.add("hidden");
+    document.getElementById("add-doctor-btn")?.addEventListener("click", () => openDoctorForm(null));
+    document.getElementById("doctor-form-cancel")?.addEventListener("click", closeDoctorForm);
+    document.getElementById("doctor-form-close-btn")?.addEventListener("click", closeDoctorForm);
 
-        const id = document.getElementById("doctor-id").value;
-        const payload = {
-          name: document.getElementById("doctor-name").value.trim(),
-          specialtyCategory: document.getElementById("doctor-category").value.trim(),
-          degree: document.getElementById("doctor-degree").value.trim(),
-          experience: document.getElementById("doctor-experience").value.trim(),
-          chamberTime: document.getElementById("doctor-chamber-time").value.trim(),
-          fee: document.getElementById("doctor-fee").value,
-          active: document.getElementById("doctor-active").checked ? 1 : 0,
-        };
+    doctorForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      doctorFormError.classList.add("hidden");
 
-        try {
-          const url = id ? `${BASE_PATH}/api/doctors/${id}` : `${BASE_PATH}/api/doctors`;
-          const method = id ? "PUT" : "POST";
-          const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          if (await handleAuthRedirect(res)) return;
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Save failed");
+      const id = document.getElementById("doctor-id").value;
+      const payload = {
+        name: document.getElementById("doctor-name").value.trim(),
+        specialtyCategory: document.getElementById("doctor-category").value.trim(),
+        degree: document.getElementById("doctor-degree").value.trim(),
+        experience: document.getElementById("doctor-experience").value.trim(),
+        chamberTime: document.getElementById("doctor-chamber-time").value.trim(),
+        fee: document.getElementById("doctor-fee").value,
+        active: document.getElementById("doctor-active").checked ? 1 : 0,
+      };
 
-          closeDoctorForm();
-          loadDoctors();
-        } catch (err) {
-          doctorFormError.textContent = err.message;
-          doctorFormError.classList.remove("hidden");
-        }
-      });
+      try {
+        const url = id ? `${BASE_PATH}/api/doctors/${id}` : `${BASE_PATH}/api/doctors`;
+        const method = id ? "PUT" : "POST";
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (await handleAuthRedirect(res)) return;
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Save failed");
 
-      async function loadDoctors() {
-        const loadingEl = document.getElementById("doctors-state-loading");
-        const tableWrap = document.getElementById("doctors-table-wrap");
-
-        try {
-          const res = await fetch(`${BASE_PATH}/api/doctors/all`);
-          if (await handleAuthRedirect(res)) return;
-          allDoctors = await res.json();
-
-          loadingEl.classList.add("hidden");
-          tableWrap.classList.remove("hidden");
-          renderDoctorRows(allDoctors);
-        } catch (err) {
-          loadingEl.textContent = "Failed to load doctors.";
-        }
+        closeDoctorForm();
+        loadDoctors();
+      } catch (err) {
+        doctorFormError.textContent = err.message;
+        doctorFormError.classList.remove("hidden");
       }
+    });
 
-      function renderDoctorRows(doctors) {
-        const body = document.getElementById("doctors-body");
-        body.innerHTML = doctors.map(d => `
+    async function loadDoctors() {
+      const loadingEl = document.getElementById("doctors-state-loading");
+      const tableWrap = document.getElementById("doctors-table-wrap");
+
+      try {
+        const res = await fetch(`${BASE_PATH}/api/doctors/all`);
+        if (await handleAuthRedirect(res)) return;
+        allDoctors = await res.json();
+
+        loadingEl.classList.add("hidden");
+        tableWrap.classList.remove("hidden");
+        renderDoctorRows(allDoctors);
+      } catch (err) {
+        loadingEl.textContent = "Failed to load doctors.";
+      }
+    }
+
+    function renderDoctorRows(doctors) {
+      const body = document.getElementById("doctors-body");
+      body.innerHTML = doctors.map(d => `
           <tr class="hover:bg-slate-50/80 transition-colors">
             <td class="py-3 px-4 font-bold text-slate-900">${escapeHtml(d.name)}</td>
             <td class="py-3 px-4 font-semibold text-sky-700">${escapeHtml(d.specialty_category)}</td>
@@ -1128,107 +1230,123 @@
           </tr>
         `).join("");
 
-        body.querySelectorAll(".edit-doctor-btn").forEach(btn => {
-          btn.addEventListener("click", (e) => {
-            const id = e.target.getAttribute("data-id");
-            const doc = allDoctors.find(d => String(d.id) === id);
-            if (doc) openDoctorForm(doc);
-          });
+      body.querySelectorAll(".edit-doctor-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const id = e.target.getAttribute("data-id");
+          const doc = allDoctors.find(d => String(d.id) === id);
+          if (doc) openDoctorForm(doc);
         });
-
-        body.querySelectorAll(".delete-doctor-btn").forEach(btn => {
-          btn.addEventListener("click", async (e) => {
-            const id = e.target.getAttribute("data-id");
-            if (!confirm("Are you sure you want to delete this doctor?")) return;
-            try {
-              const res = await fetch(`${BASE_PATH}/api/doctors/${id}`, { method: "DELETE" });
-              if (await handleAuthRedirect(res)) return;
-              const data = await res.json();
-              if (!res.ok) throw new Error(data.error || "Delete failed");
-              loadDoctors();
-            } catch (err) {
-              alert(err.message);
-            }
-          });
-        });
-
-        // Update datalist
-        const categoryOptions = document.getElementById("category-options");
-        const uniqueCats = [...new Set(doctors.map(d => d.specialty_category))];
-        categoryOptions.innerHTML = uniqueCats.map(c => `<option value="${escapeHtml(c)}"></option>`).join("");
-
-        if (typeof lucide !== "undefined") lucide.createIcons();
-      }
-
-      // ==========================================================
-      // TAB 4: SETTINGS LOGIC (PHASE 2)
-      // ==========================================================
-      async function loadSettings() {
-        try {
-          const res = await fetch(`${BASE_PATH}/api/admin/settings`);
-          if (await handleAuthRedirect(res)) return;
-          const s = await res.json();
-
-          document.getElementById("set-bkash-number").value = s.bkash_number || "";
-          document.getElementById("set-bkash-enabled").checked = s.bkash_enabled === "1";
-          document.getElementById("set-bkash-instructions").value = s.bkash_instructions || "";
-
-          document.getElementById("set-nagad-number").value = s.nagad_number || "";
-          document.getElementById("set-nagad-enabled").checked = s.nagad_enabled === "1";
-          document.getElementById("set-nagad-instructions").value = s.nagad_instructions || "";
-
-          document.getElementById("set-center-enabled").checked = s.pay_at_center_enabled === "1";
-          document.getElementById("set-center-instructions").value = s.pay_at_center_instructions || "";
-
-          document.getElementById("set-center-name").value = s.center_name || "";
-          document.getElementById("set-center-hotline").value = s.center_hotline || "";
-          document.getElementById("set-center-address").value = s.center_address || "";
-        } catch (err) {
-          console.error("Settings fetch failed:", err);
-        }
-      }
-
-      document.getElementById("settings-form")?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const payload = {
-          bkash_number: document.getElementById("set-bkash-number").value.trim(),
-          bkash_enabled: document.getElementById("set-bkash-enabled").checked ? "1" : "0",
-          bkash_instructions: document.getElementById("set-bkash-instructions").value.trim(),
-
-          nagad_number: document.getElementById("set-nagad-number").value.trim(),
-          nagad_enabled: document.getElementById("set-nagad-enabled").checked ? "1" : "0",
-          nagad_instructions: document.getElementById("set-nagad-instructions").value.trim(),
-
-          pay_at_center_enabled: document.getElementById("set-center-enabled").checked ? "1" : "0",
-          pay_at_center_instructions: document.getElementById("set-center-instructions").value.trim(),
-
-          center_name: document.getElementById("set-center-name").value.trim(),
-          center_hotline: document.getElementById("set-center-hotline").value.trim(),
-          center_address: document.getElementById("set-center-address").value.trim(),
-        };
-
-        try {
-          const res = await fetch(`${BASE_PATH}/api/admin/settings`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          if (await handleAuthRedirect(res)) return;
-          if (!res.ok) throw new Error("Could not save settings");
-
-          const alertEl = document.getElementById("settings-success");
-          alertEl.classList.remove("hidden");
-          setTimeout(() => alertEl.classList.add("hidden"), 5000);
-        } catch (err) {
-          alert("Settings update failed. Please try again.");
-        }
       });
 
-      // INITIAL BOOT
-      document.addEventListener("DOMContentLoaded", () => {
-        if (typeof lucide !== "undefined") lucide.createIcons();
-        switchTab("appointments");
+      body.querySelectorAll(".delete-doctor-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const id = e.target.getAttribute("data-id");
+          if (!confirm("Are you sure you want to delete this doctor?")) return;
+          try {
+            const res = await fetch(`${BASE_PATH}/api/doctors/${id}`, { method: "DELETE" });
+            if (await handleAuthRedirect(res)) return;
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Delete failed");
+            loadDoctors();
+          } catch (err) {
+            alert(err.message);
+          }
+        });
       });
-    </script>
-  </body>
+
+      // Update datalist
+      const categoryOptions = document.getElementById("category-options");
+      const uniqueCats = [...new Set(doctors.map(d => d.specialty_category))];
+      categoryOptions.innerHTML = uniqueCats.map(c => `<option value="${escapeHtml(c)}"></option>`).join("");
+
+      if (typeof lucide !== "undefined") lucide.createIcons();
+    }
+
+    // ==========================================================
+    // TAB 4: SETTINGS LOGIC (PHASE 2)
+    // ==========================================================
+    function showSettingsError(text) {
+      const box = document.getElementById("settings-error");
+      document.getElementById("settings-error-text").textContent = text;
+      box.classList.remove("hidden");
+      document.getElementById("settings-success").classList.add("hidden");
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${BASE_PATH}/api/admin/settings`, { credentials: "same-origin" });
+        if (await handleAuthRedirect(res)) return;
+        if (!res.ok) throw new Error(await readApiError(res, "Could not load settings."));
+        const s = await res.json();
+
+        document.getElementById("set-bkash-number").value = s.bkash_number || "";
+        document.getElementById("set-bkash-enabled").checked = s.bkash_enabled === "1";
+        document.getElementById("set-bkash-instructions").value = s.bkash_instructions || "";
+
+        document.getElementById("set-nagad-number").value = s.nagad_number || "";
+        document.getElementById("set-nagad-enabled").checked = s.nagad_enabled === "1";
+        document.getElementById("set-nagad-instructions").value = s.nagad_instructions || "";
+
+        document.getElementById("set-center-enabled").checked = s.pay_at_center_enabled === "1";
+        document.getElementById("set-center-instructions").value = s.pay_at_center_instructions || "";
+
+        document.getElementById("set-center-name").value = s.center_name || "";
+        document.getElementById("set-center-hotline").value = s.center_hotline || "";
+        document.getElementById("set-center-address").value = s.center_address || "";
+      } catch (err) {
+        console.error("Settings fetch failed:", err);
+        showSettingsError(err.message || "Could not load settings.");
+      }
+    }
+
+    document.getElementById("settings-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        bkash_number: document.getElementById("set-bkash-number").value.trim(),
+        bkash_enabled: document.getElementById("set-bkash-enabled").checked ? "1" : "0",
+        bkash_instructions: document.getElementById("set-bkash-instructions").value.trim(),
+
+        nagad_number: document.getElementById("set-nagad-number").value.trim(),
+        nagad_enabled: document.getElementById("set-nagad-enabled").checked ? "1" : "0",
+        nagad_instructions: document.getElementById("set-nagad-instructions").value.trim(),
+
+        pay_at_center_enabled: document.getElementById("set-center-enabled").checked ? "1" : "0",
+        pay_at_center_instructions: document.getElementById("set-center-instructions").value.trim(),
+
+        center_name: document.getElementById("set-center-name").value.trim(),
+        center_hotline: document.getElementById("set-center-hotline").value.trim(),
+        center_address: document.getElementById("set-center-address").value.trim(),
+      };
+
+      const saveBtn = document.getElementById("save-settings-btn");
+      saveBtn.disabled = true;
+      document.getElementById("settings-error").classList.add("hidden");
+      try {
+        const res = await fetch(`${BASE_PATH}/api/admin/settings`, {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (await handleAuthRedirect(res)) return;
+        if (!res.ok) throw new Error(await readApiError(res, "Settings update failed. Please try again."));
+
+        const alertEl = document.getElementById("settings-success");
+        alertEl.classList.remove("hidden");
+        setTimeout(() => alertEl.classList.add("hidden"), 5000);
+      } catch (err) {
+        showSettingsError(err.message || "Settings update failed. Please try again.");
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    // INITIAL BOOT
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof lucide !== "undefined") lucide.createIcons();
+      switchTab("appointments");
+    });
+  </script>
+</body>
+
 </html>

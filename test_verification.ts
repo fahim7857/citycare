@@ -1,4 +1,4 @@
-import { db, getSetting, updateSetting } from './db.js';
+import { db, getSetting, updateSetting } from './db.ts';
 
 // We can test against db directly and test server routes if imported or initiated
 async function runTests() {
@@ -22,7 +22,7 @@ async function runTests() {
     console.log('\n--- 1. Database Schema & Migration Verification ---');
     const appColumns = db.prepare(`PRAGMA table_info(appointments)`).all() as Array<{ name: string }>;
     const colNames = appColumns.map(c => c.name);
-    
+
     assert(colNames.includes('booking_reference'), 'appointments table has booking_reference column');
     assert(colNames.includes('access_token'), 'appointments table has access_token column');
     assert(colNames.includes('payment_method'), 'appointments table has payment_method column');

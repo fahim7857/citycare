@@ -947,18 +947,23 @@ router.put("/api/appointments/:id/approval", requireAdminAuth, (req, res) => {
 
   const adminUser = (req.session as any)?.adminUsername || "admin";
 
-  db.transaction(() => {
-    db.prepare(`
-      UPDATE appointments
-      SET status = ?, approved_by = ?, approved_at = datetime('now')
-      WHERE id = ?
-    `).run(status, adminUser, id);
+  try {
+    db.transaction(() => {
+      db.prepare(`
+        UPDATE appointments
+        SET status = ?, approved_by = ?, approved_at = datetime('now')
+        WHERE id = ?
+      `).run(status, adminUser, id);
 
-    db.prepare(`
-      INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
-      VALUES (?, 'approval_change', ?, ?)
-    `).run(id, adminUser, `Appointment status changed to ${status}`);
-  })();
+      db.prepare(`
+        INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
+        VALUES (?, 'approval_change', ?, ?)
+      `).run(id, adminUser, `Appointment status changed to ${status}`);
+    })();
+  } catch (err) {
+    console.error("Appointment approval update failed:", err);
+    return res.status(500).json({ error: "Could not update appointment status." });
+  }
 
   res.json({ success: true, status, approvedBy: adminUser });
 });
@@ -982,18 +987,23 @@ router.put("/api/appointments/:id/payment", requireAdminAuth, (req, res) => {
 
   const adminUser = (req.session as any)?.adminUsername || "admin";
 
-  db.transaction(() => {
-    db.prepare(`
-      UPDATE appointments
-      SET payment_status = ?, payment_verified_by = ?, payment_verified_at = datetime('now')
-      WHERE id = ?
-    `).run(paymentStatus, adminUser, id);
+  try {
+    db.transaction(() => {
+      db.prepare(`
+        UPDATE appointments
+        SET payment_status = ?, payment_verified_by = ?, payment_verified_at = datetime('now')
+        WHERE id = ?
+      `).run(paymentStatus, adminUser, id);
 
-    db.prepare(`
-      INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
-      VALUES (?, 'payment_change', ?, ?)
-    `).run(id, adminUser, `Payment status changed to ${paymentStatus}`);
-  })();
+      db.prepare(`
+        INSERT INTO appointment_events (appointment_id, event_type, admin_username, details)
+        VALUES (?, 'payment_change', ?, ?)
+      `).run(id, adminUser, `Payment status changed to ${paymentStatus}`);
+    })();
+  } catch (err) {
+    console.error("Payment status update failed:", err);
+    return res.status(500).json({ error: "Could not update payment status." });
+  }
 
   res.json({ success: true, paymentStatus, verifiedBy: adminUser });
 });
@@ -1134,17 +1144,67 @@ router.get("/api/admin/settings", requireAdminAuth, (_req, res) => {
   res.json(getAllSettings());
 });
 
+// Settings keys the admin dashboard may write — exactly the keys that
+// GET /api/payment-config reads.
+const ADMIN_SETTING_KEYS = [
+  "bkash_enabled",
+  "bkash_number",
+  "bkash_instructions",
+  "nagad_enabled",
+  "nagad_number",
+  "nagad_instructions",
+  "pay_at_center_enabled",
+  "pay_at_center_instructions",
+  "center_name",
+  "center_hotline",
+  "center_address",
+];
+const ADMIN_SETTING_TOGGLES = ["bkash_enabled", "nagad_enabled", "pay_at_center_enabled"];
+
 // API: Admin updates settings
 router.put("/api/admin/settings", requireAdminAuth, (req, res) => {
   const updates = req.body;
-  if (!updates || typeof updates !== "object") {
+  if (!updates || typeof updates !== "object" || Array.isArray(updates)) {
     return res.status(400).json({ error: "Invalid settings payload." });
   }
 
-  for (const [key, value] of Object.entries(updates)) {
-    if (typeof key === "string" && typeof value === "string") {
-      updateSetting(key, value);
+  const entries = Object.entries(updates) as [string, unknown][];
+  for (const [key, value] of entries) {
+    if (!ADMIN_SETTING_KEYS.includes(key)) {
+      return res.status(400).json({ error: `Unknown setting: ${key}` });
     }
+    if (typeof value !== "string") {
+      return res.status(400).json({ error: `Setting "${key}" must be a string.` });
+    }
+    if (ADMIN_SETTING_TOGGLES.includes(key) && value !== "0" && value !== "1") {
+      return res.status(400).json({ error: `Setting "${key}" must be "0" or "1".` });
+    }
+  }
+
+  // bKash / Nagad numbers must be valid phone numbers, and a method cannot
+  // be enabled without one.
+  const merged = { ...getAllSettings(), ...(updates as Record<string, string>) } as Record<string, string>;
+  for (const method of ["bkash", "nagad"]) {
+    const label = method === "bkash" ? "bKash" : "Nagad";
+    if (!(`${method}_number` in updates) && !(`${method}_enabled` in updates)) continue;
+    const number = (merged[`${method}_number`] || "").trim();
+    if (number && !isValidPhone(number)) {
+      return res.status(400).json({ error: `${label} number must be a valid phone number (10 to 15 digits).` });
+    }
+    if (merged[`${method}_enabled`] === "1" && !number) {
+      return res.status(400).json({ error: `${label} number is required while ${label} is enabled.` });
+    }
+  }
+
+  try {
+    db.transaction(() => {
+      for (const [key, value] of entries) {
+        updateSetting(key, value as string);
+      }
+    })();
+  } catch (err) {
+    console.error("Settings update failed:", err);
+    return res.status(500).json({ error: "Could not save settings." });
   }
 
   res.json({ success: true, settings: getAllSettings() });
